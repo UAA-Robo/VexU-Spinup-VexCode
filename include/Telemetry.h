@@ -1,7 +1,7 @@
 
 #pragma once
 #include "Hardware.h"
-#include "vex.h"
+/*
 
 class Telemetry {
 
@@ -83,3 +83,4 @@ private:
     
 };
 
+*/

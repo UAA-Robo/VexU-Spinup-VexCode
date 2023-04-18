@@ -21,9 +21,8 @@ public:
     void drive();
     void driveAuto();
 private:
-    UserDrive* userDrive;
-    AutoDrive* autoDrive;
+    //UserDrive* userDrive;
+    //AutoDrive* autoDrive;
     Hardware* hw;
-    Telemetry* tm;
-    const int DRIVETRAINWHEELCIRCUMFERENCE = 12.57; //inches
+    //Telemetry* tm;
 };

@@ -1,3 +1,4 @@
+/*
 #include "Telemetry.h"
 
 Telemetry ::Telemetry(Hardware *devices, double DRIVETRAINWHEELCIRCUMFERENCE)
@@ -258,3 +259,5 @@ std::pair<double, double> Telemetry::snapShotAverage(std::vector<std::pair<doubl
 
     return {avgx,avgy};
 }
+
+*/

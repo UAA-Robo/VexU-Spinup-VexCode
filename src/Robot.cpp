@@ -3,12 +3,12 @@
 Robot::Robot()
 {
     hw = new Hardware();
-    tm = new Telemetry(hw, DRIVETRAINWHEELCIRCUMFERENCE);
-    userDrive = new UserDrive(hw, tm); 
-    autoDrive = new AutoDrive(hw, tm, DRIVETRAINWHEELCIRCUMFERENCE);
+    //tm = new Telemetry(hw, DRIVETRAINWHEELCIRCUMFERENCE);
+    //userDrive = new UserDrive(hw, tm); 
+    //autoDrive = new AutoDrive(hw, tm, DRIVETRAINWHEELCIRCUMFERENCE);
 }
 
-
+/*
 void Robot::drive() {
     userDrive->drive();
 }
@@ -29,3 +29,5 @@ void Robot::printDistToGoal(){
         vex::wait(70,vex::msec)
     }
 }
+
+*/
