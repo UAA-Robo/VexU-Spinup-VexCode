@@ -7,6 +7,9 @@ public:
     //Constructors
     Hardware();
 
+    int getGearRatioMultiplier(vex::motor &motor); 
+    int getGearRatioMultiplier(vex::motor_group &motorGroup);  
+
     vex::brain brain;
     vex::controller controller = vex::controller(vex::primary);
 
