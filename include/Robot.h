@@ -22,9 +22,10 @@ public:
     void drive();
     void driveAuto();
 private:
-    //UserDrive* userDrive;
-    //AutoDrive* autoDrive;
     Hardware* hw;
     RobotConfig* rc;
     Telemetry* tm;
+
+    //UserDrive* userDrive;
+    AutoDrive* autoDrive;
 };
