@@ -7,20 +7,20 @@ Robot::Robot()
     tm = new Telemetry(hw, rc);
     
     //userDrive = new UserDrive(hw, rc, tm); 
-    //autoDrive = new AutoDrive(hw, rc, tm);
+    autoDrive = new AutoDrive(hw, rc, tm);
 }
 
 /*
 void Robot::drive() {
     userDrive->drive();
 }
-
+*/
 
 void Robot::driveAuto() {
     autoDrive->drive();
 }
 
-
+/*
 void Robot::printDistToGoal(){
     while(1){
         vex::wait(500,vex::msec);
