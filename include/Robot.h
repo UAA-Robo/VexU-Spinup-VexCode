@@ -3,6 +3,7 @@
 #include "UserDrive.h"
 #include "Telemetry.h"
 #include "Hardware.h"
+#include "RobotConfig.h"
 #include "vex.h"
 
 
@@ -24,5 +25,6 @@ private:
     //UserDrive* userDrive;
     //AutoDrive* autoDrive;
     Hardware* hw;
-    //Telemetry* tm;
+    RobotConfig* rc;
+    Telemetry* tm;
 };

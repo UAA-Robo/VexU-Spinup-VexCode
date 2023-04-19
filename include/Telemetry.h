@@ -1,12 +1,11 @@
 
 #pragma once
 #include "Hardware.h"
-/*
+#include "RobotConfig.h"
 
 class Telemetry {
-
 public:
-    Telemetry(Hardware* devices, double DRIVETRAINWHEELCIRCUMFERENCE);
+    Telemetry(Hardware* hardware, RobotConfig* robotConfig);
 
     /// @brief              Calculates the distance (in inches) between to points
     /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
@@ -22,13 +21,11 @@ public:
 
     /// @brief      Calculates the displacement that the robot has moved in inches based on encoder positions. Assumes 
     ///             the motors were reset at the beginning of the displacement disstance
-    /// @param WHEELCIRCUMFERENCE   Double that is the circumference of the drive train wheels in inches
     /// @return     Returns the displacement in inches
     double getDrivetrainEncoderDisplacement(); 
     
     /// @brief      Updates and returns the distance the robot has moved in inches based on encoder positions. Assumes 
     ///             the motors were reset at the beginning of the displacement disstance   
-    /// @param WHEELCIRCUMFERENCE   Double that is the circumference of the drive train wheels in inches
     /// @return     Returns that distance in inches
     double updateDrivetrainEncoderTotalDistance();
     
@@ -44,11 +41,10 @@ public:
     double updateGpsTotalDistance(std::pair<double,double> lastUpdatedPosition);
 
 
-    /// @brief      Calculates the linear x and y velocity in in relation to the feild. Uses the motor encoders for
+    /// @brief      Calculates the linear x and y velocity percent (from -100 to 100) in relation to the feild. Uses the motor encoders for
     ///             the wheel rotational velocity and the inertia seensor for heading of the robot. Assumes the origin is considered 
     ///             the center of the feild and the inertial sensor heading was initialized with the pos x axis being 0.
     ///             Math based on https://www.cs.cmu.edu/~rasc/Download/AMRobots3.pdf
-    /// @param  WHEELCIRCUMFERENCE Double that is the circumference of the drive train wheels in inches
     /// @return     Returns a pair of doubles {xLinearVelocity, yLinearVelocity} in inches per minute.
     std::pair<double,double> getLinearVel();
 
@@ -70,17 +66,17 @@ public:
 
 private:
     Hardware* hw;
+    RobotConfig* rc;
     double gpsTotalDistance; 
     double drivetrainEncoderTotalDistance;
-    const int SNAPSHOTSIZE = 1600;
-    double WHEELCIRCUMFERENCE;
 
     /// @brief              For a snapshot of data (size SNAPSHOTSIZE), disccards the outliers using boxplot statistics and takes the average of the data.
-    /// @param snapshot     Vector of doubles of size SNAPSHOTSIZE that contains the data points to be normalized and averaged.
+    /// @param snapshot     Vector of doubles or pairs of doubles of size SNAPSHOTSIZE that contains the data points to be normalized and averaged.
     /// @return             Double of thhe normalized/averaged data.
     double snapShotAverage(std::vector<double> snapshot);
     std::pair<double,double> snapShotAverage(std::vector<std::pair<double,double>>& snapshot);
     
 };
 
-*/
+
+

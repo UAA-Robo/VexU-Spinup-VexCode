@@ -3,9 +3,11 @@
 Robot::Robot()
 {
     hw = new Hardware();
-    //tm = new Telemetry(hw, DRIVETRAINWHEELCIRCUMFERENCE);
-    //userDrive = new UserDrive(hw, tm); 
-    //autoDrive = new AutoDrive(hw, tm, DRIVETRAINWHEELCIRCUMFERENCE);
+    rc = new RobotConfig(hw);
+    tm = new Telemetry(hw, rc);
+    
+    //userDrive = new UserDrive(hw, rc, tm); 
+    //autoDrive = new AutoDrive(hw, rc, tm);
 }
 
 /*

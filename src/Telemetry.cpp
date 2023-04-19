@@ -1,12 +1,13 @@
-/*
+
 #include "Telemetry.h"
 
-Telemetry ::Telemetry(Hardware *devices, double DRIVETRAINWHEELCIRCUMFERENCE)
+Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
-    hw = devices;
+    hw = hardware;
+    rc = robotConfig;
+
     gpsTotalDistance = 0;
     drivetrainEncoderTotalDistance = 0;
-    WHEELCIRCUMFERENCE = DRIVETRAINWHEELCIRCUMFERENCE;
 }
 
 double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
@@ -25,17 +26,18 @@ double Telemetry ::getDrivetrainEncoderDisplacement()
 {
     double avgEncoderRotations = 0; // in revolutions
     double displacement;
+    int numEncoders = hw->driveTrain.count();
 
     // averag encoders
-    int numEncoders = hw->driveTrain.size();
-    for (int i = 0; i < numEncoders; i++)
-    {
-        avgEncoderRotations += hw->driveTrain.get_positions().at(i);
-    }
+    avgEncoderRotations += hw->wheelLeftBack.position(vex::rev);
+    avgEncoderRotations += hw->wheelLeftFront.position(vex::rev);
+    avgEncoderRotations += hw->wheelRightBack.position(vex::rev);
+    avgEncoderRotations += hw->wheelRightFront.position(vex::rev);
+
     avgEncoderRotations /= numEncoders;
 
     // calulate displacement
-    displacement = avgEncoderRotations * WHEELCIRCUMFERENCE;
+    displacement = avgEncoderRotations * rc->WHEELCIRC;
 
     return displacement;
 }
@@ -59,21 +61,21 @@ double Telemetry ::updateGpsTotalDistance(std::pair<double, double> lastUpdatedP
 
 std::pair<double, double> Telemetry::getLinearVel()
 {
-    int numEncoders = hw->leftWheels.size(); // Assume left and right side have same number of mootors
-
     double avgLeftRotationalVel = 0;  // Motors on left side of drivetrain
     double avgRightRotationalVel = 0; // Motors on right side of drivetrain
+    int numEncoders = hw->leftWheels.count(); // Assume left and right side have same number of mootors
 
-    for (int i = 0; i < numEncoders; i++)
-    {
-        avgLeftRotationalVel += hw->leftWheels.get_actual_velocities().at(i); // in RPM
-        avgRightRotationalVel += hw->rightWheels.get_actual_velocities().at(i);
-    }
+
+    avgLeftRotationalVel += hw->wheelLeftBack.velocity(vex::pct);
+    avgLeftRotationalVel += hw->wheelLeftFront.velocity(vex::pct);
+    avgRightRotationalVel += hw->wheelRightBack.velocity(vex::pct);
+    avgRightRotationalVel += hw->wheelRightFront.velocity(vex::pct);
+
     avgLeftRotationalVel /= numEncoders;
     avgRightRotationalVel /= numEncoders;
 
     double angleFromXAxis = getInertiaHeading() * M_PI / 180; // converted to rads for cos() and sin()
-    const double WHEELDIAMETER = WHEELCIRCUMFERENCE / M_PI;
+    const double WHEELDIAMETER = rc->WHEELCIRC / M_PI;
 
     // Inches per minute
     double xLinearVel = cos(angleFromXAxis) * WHEELDIAMETER * (avgLeftRotationalVel + avgRightRotationalVel) / 2; // In reference to the field
@@ -89,10 +91,10 @@ std::pair<double, double> Telemetry::getGPSPosition()
 
     std::pair<double, double> currPosition;
 
-    for (int i = 0; i < SNAPSHOTSIZE; ++i)
+    for (int i = 0; i < rc->SNAPSHOTSIZE ; ++i)
     {
-        xSnapshot.push_back(hw->gps.get_status().x * hw->METERTOINCH);
-        ySnapshot.push_back(hw->gps.get_status().y * hw->METERTOINCH);
+        xSnapshot.push_back(hw->gpsSensor.xPosition(vex::inches));
+        ySnapshot.push_back(hw->gpsSensor.yPosition(vex::inches));
     }
 
     currPosition.first = snapShotAverage(xSnapshot);
@@ -107,10 +109,10 @@ double Telemetry::getGPSHeading()
     std::vector<double> snapshot;
     double heading;
 
-    for (int i = 0; i < SNAPSHOTSIZE; ++i)
+    for (int i = 0; i < rc->SNAPSHOTSIZE; ++i)
     {
         // Correct heading to be always be positive counterclockwise from the x axis bc the gps sensor reads clockwise form the positive y axis
-        heading = hw->gps.get_heading();
+        heading = hw->gpsSensor.heading();
         if (heading > 0)
             heading = 270 - heading;
         else
@@ -127,10 +129,10 @@ double Telemetry::getInertiaHeading()
     std::vector<double> snapshot;
     double heading;
 
-    for (int i = 0; i < SNAPSHOTSIZE; ++i)
+    for (int i = 0; i < rc->SNAPSHOTSIZE; ++i)
     {
         // Correct heading to be always be positive counterclockwise from the x axis bc the inertia sensor reads clockwise form the x axis
-        heading = hw->inertial.get_heading();
+        heading = hw->inertiaSensor.heading();
         if (heading > 0)
             heading = 360 - heading;
         else
@@ -144,7 +146,7 @@ double Telemetry::getInertiaHeading()
 
 void Telemetry::setInertiaHeadingToGPS()
 {
-    hw->inertial.set_heading(getGPSHeading());
+    hw->inertiaSensor.setHeading(getGPSHeading(), vex::degrees);
 }
 
 double Telemetry::snapShotAverage(std::vector<double> snapshot)
@@ -209,7 +211,7 @@ std::pair<double, double> Telemetry::snapShotAverage(std::vector<std::pair<doubl
     std::sort(snapshoty.begin(),snapshoty.end());
 
     size_t dataSize = snapshot.size();
-    size_t q1Idx, q2Idx, q3Idx, q1Idy, q2Idy, q3Idy;
+    size_t q1Idx, q2Idx, q3Idx; //Assumes y quartile indeces are the same as x
     double quartile1x, quartile2x, quartile3x, IQRx, quartile1y, quartile2y, quartile3y, IQRy;
 
     // Find quartile indices
@@ -260,4 +262,3 @@ std::pair<double, double> Telemetry::snapShotAverage(std::vector<std::pair<doubl
     return {avgx,avgy};
 }
 
-*/

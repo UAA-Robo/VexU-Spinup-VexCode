@@ -2,6 +2,7 @@
 #include "vex.h"
 #include "Hardware.h"
 #include "Telemetry.h"
+#include "RobotConfig.h"
 #include "map/Map.h"
 
 class Drive{
@@ -16,12 +17,10 @@ public:
 
 protected:
     Hardware* hw;
+    RobotConfig* rc;
     Telemetry* tm;
     Map* mp;
-    short int mirrorDrive = 1;
-    int flywheelVoltage;
     
-    double WHEELCIRCUMFERENCE;
 
     /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on
     ///             the horizontal percentage and vertical percentage passed in. Automatically scales the velocities

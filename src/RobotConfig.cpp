@@ -1,5 +1,5 @@
 #include "RobotConfig.h"
 
-RobotConfig::RobotConfig() {
+RobotConfig::RobotConfig(Hardware* hw) {
 
 }

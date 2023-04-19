@@ -29,18 +29,14 @@ std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> 
 void Drive::moveDriveTrain(std::pair<double,double> velPercent)
 {
     std::pair<double,double> vel = calculateDriveTrainVel(velPercent);
-    if(mirrorDrive > 0){
-        hw->leftWheels.spin(vex::directionType::fwd, vel.first, vex::velocityUnits::rpm);
-        hw->leftWheels.spin(vex::directionType::fwd, vel.second, vex::velocityUnits::rpm);
-    }else{
-        hw->leftWheels.spin(vex::directionType::rev, vel.first, vex::velocityUnits::rpm);
-        hw->leftWheels.spin(vex::directionType::rev, vel.second, vex::velocityUnits::rpm);
-    }
+
+    hw->leftWheels.spin(vex::directionType::fwd, vel.first, vex::velocityUnits::rpm);
+    hw->leftWheels.spin(vex::directionType::fwd, vel.second, vex::velocityUnits::rpm);
 }
 
 
 void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double distance) {
-    double numberWheelRevolutions = distance / WHEELCIRCUMFERENCE;
+    double numberWheelRevolutions = distance / rc->WHEELCIRC;
     
     std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
     hw->leftWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.first, vex::velocityUnits::rpm);

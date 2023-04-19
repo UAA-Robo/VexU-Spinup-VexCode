@@ -20,14 +20,14 @@ public:
     vex::gps gpsSensor = vex::gps(vex::PORT18, /*originx*/ 0, /*originy*/ -3.3, /*dist unit*/ vex::distanceUnits::in, /*head offset*/ 180, /*direction turntype*/ vex::turnType::right); //SID Offset
 
     vex::motor wheelLeftFront = vex::motor(vex::PORT1, vex::ratio18_1, false);
-    vex::motor wheelleftBack = vex::motor(vex::PORT2, vex::ratio18_1, true);
+    vex::motor wheelLeftBack = vex::motor(vex::PORT2, vex::ratio18_1, true);
     vex::motor wheelRightFront = vex::motor(vex::PORT9, vex::ratio18_1, true);
     vex::motor wheelRightBack = vex::motor(vex::PORT10, vex::ratio18_1, false);
 
-    vex::motor_group leftWheels = vex::motor_group(wheelLeftFront, wheelleftBack);
+    vex::motor_group leftWheels = vex::motor_group(wheelLeftFront, wheelLeftBack);
     vex::motor_group rightWheels = vex::motor_group(wheelRightFront, wheelRightBack);
 
-    vex::motor_group driveTrain = vex::motor_group(wheelLeftFront, wheelleftBack, wheelRightFront, wheelRightBack);
+    vex::motor_group driveTrain = vex::motor_group(wheelLeftFront, wheelLeftBack, wheelRightFront, wheelRightBack);
     vex::smartdrive smartDriveTrain = vex::smartdrive(leftWheels, rightWheels, inertiaSensor);
 
     vex::motor flywheelTop = vex::motor(vex::PORT4, vex::ratio6_1, false);
