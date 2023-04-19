@@ -18,7 +18,7 @@ std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> 
         double rightVelMultiplier = rawRightVel / normalizationFactor;
 
 
-        double leftVel =  100 * leftVelMultiplier;
+        double leftVel =  100 * leftVelMultiplier; 
         double rightVel =  100 * rightVelMultiplier;
 
         return {leftVel, rightVel};
