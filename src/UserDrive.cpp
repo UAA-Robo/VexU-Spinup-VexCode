@@ -7,7 +7,7 @@ UserDrive::UserDrive(Hardware *hardware, Telemetry *telemetry)
     mp = new Map();
 }
 
-void UserDrive::driveTrainControls()
+void UserDrive::drive()
 {
     mirrorDriveToggle();
     driveTrainControls();
