@@ -38,7 +38,7 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     double numberWheelRevolutions = distance / rc->WHEELCIRC;
     
     std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
-    hw->leftWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.first, vex::velocityUnits::pct);
+    hw->leftWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.first, vex::velocityUnits::pct, false);
     hw->rightWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.second, vex::velocityUnits::pct);
     vex::wait(50, vex::timeUnits::msec);
     while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct));

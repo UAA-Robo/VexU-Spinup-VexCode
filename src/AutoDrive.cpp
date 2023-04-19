@@ -10,20 +10,23 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 void AutoDrive::drive() {
     double const DRIVEVELPERCENT = 50;
     double flywheelVoltPercent = 70;
-    std::pair<double,double> initPosition = {-61.5, 35.5};
+    //{-61.5, 35.5};
+    std::pair<double,double> initPosition = tm->getGPSPosition();
 
     //tm->setInertiaHeadingToGPS(); 
-    hw->inertiaSensor.setHeading(180, vex::deg); //TEST
+    tm->setInertiaHeadingToGPS();
     tm->setManualPosition(initPosition); //TEST
 
     //Set bot at rollers and spin intake reveerse to get them
-    spinIntake(false, true);
+    //spinIntake(false, true);
     vex::wait(1000, vex::msec);
     
     //Drive backward and shoot 2 diskds
     rotateAndDriveToPosition({initPosition.first + 3.8, initPosition.second}, true);
+    rotateAndDriveToPosition({initPosition.first, initPosition.second}, true);
     //moveDriveTrainDistance({DRIVEVELPERCENT, 0}, -3.8);
     
+    /*
     rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 2);
 
     
@@ -43,6 +46,7 @@ void AutoDrive::drive() {
 
     //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 3);
+    */
 
 }
 

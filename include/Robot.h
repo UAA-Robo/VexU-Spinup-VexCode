@@ -9,6 +9,7 @@
 
 /*
 STANDARD UNITS:
+    Velocity in percent
     Encoders in Rotations
     Distance in Inches
     Heading/Angle in Degrees
