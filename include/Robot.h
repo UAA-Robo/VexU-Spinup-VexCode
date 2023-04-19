@@ -26,6 +26,6 @@ private:
     RobotConfig* rc;
     Telemetry* tm;
 
-    //UserDrive* userDrive;
+    UserDrive* userDrive;
     AutoDrive* autoDrive;
 };

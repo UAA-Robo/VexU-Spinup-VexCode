@@ -20,7 +20,7 @@ void UserDrive::drive()
 void UserDrive::driveTrainControls(){
     const int DEADZONE = 5;
 
-    double forwardBackward = (double) hw->controller.Axis4.position(vex::percentUnits::pct);
+    double forwardBackward = (double) hw->controller.Axis3.position(vex::percentUnits::pct);
     double turning = (double) hw->controller.Axis1.position(vex::percentUnits::pct);
 
     if(std::abs(forwardBackward) < DEADZONE){

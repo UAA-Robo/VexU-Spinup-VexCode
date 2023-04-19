@@ -6,15 +6,15 @@ Robot::Robot()
     rc = new RobotConfig(hw);
     tm = new Telemetry(hw, rc);
     
-    //userDrive = new UserDrive(hw, rc, tm); 
+    userDrive = new UserDrive(hw, tm); 
     autoDrive = new AutoDrive(hw, rc, tm);
 }
 
-/*
+
 void Robot::drive() {
     userDrive->drive();
 }
-*/
+
 
 void Robot::driveAuto() {
     autoDrive->drive();

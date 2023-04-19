@@ -62,7 +62,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   while (1) {
-
+    icebot->drive();
     wait(20, msec); // Sleep the task for a short amount of time to prevent wasted resources.
   }
 }
@@ -79,7 +79,8 @@ int main() {
   pre_auton();
 
   //TESTING
-  autonomous();
+  //autonomous();
+  usercontrol();
 
 
   // Prevent main from exiting with an infinite loop.
