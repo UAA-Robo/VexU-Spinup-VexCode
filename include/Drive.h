@@ -64,6 +64,8 @@ protected:
     /// @param ISINVERT     If true, runs the intake in reverse;
     void spinIntake(bool ISSTOP = false, bool ISINVERT = false);
 
+    //void (Drive::*spinIntakePtr)(bool, bool) = &Drive::spinIntake;
+
     /// @brief  Sets the voltage and spins the flywheel until the function is called again with a differrent voltage (like 0).
     /// @param voltage      Double from -12,000 to 12,000. Negative voltage reversed the flywheel.
     void spinFlywheel(double voltage);
