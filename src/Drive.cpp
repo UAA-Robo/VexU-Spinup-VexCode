@@ -17,10 +17,9 @@ std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> 
         double leftVelMultiplier = rawLeftVel / normalizationFactor;
         double rightVelMultiplier = rawRightVel / normalizationFactor;
 
-        int gearRatioMult = hw->getGearRatioMultiplier(hw->driveTrain);
 
-        double leftVel =  100 * leftVelMultiplier * gearRatioMult;
-        double rightVel =  100 * rightVelMultiplier * gearRatioMult;
+        double leftVel =  100 * leftVelMultiplier;
+        double rightVel =  100 * rightVelMultiplier;
 
         return {leftVel, rightVel};
 }
@@ -74,11 +73,10 @@ void Drive :: spinFlywheel(double voltage) {
 
 
 void Drive :: flickDisk() {
-    int gearRatioMult = hw->getGearRatioMultiplier(hw->launcher);
     double velPercent = 100;
-    hw->launcher.spin(vex::directionType::fwd, velPercent * gearRatioMult, vex::percentUnits::pct);
+    hw->launcher.spin(vex::directionType::fwd, velPercent, vex::percentUnits::pct);
     vex::wait(150, vex::timeUnits::msec);
-    hw->launcher.spin(vex::directionType::rev, velPercent * gearRatioMult, vex::percentUnits::pct);
+    hw->launcher.spin(vex::directionType::rev, velPercent, vex::percentUnits::pct);
     vex::wait(170, vex::timeUnits::msec);
     
 }
@@ -86,10 +84,9 @@ void Drive :: flickDisk() {
 
 void Drive::expand()
 {
-    int gearRatioMult = hw->getGearRatioMultiplier(hw->expansion);
     double velPercent = 100;
 
-    hw->expansion.spin(vex::directionType::fwd, velPercent * gearRatioMult, vex::percentUnits::pct);
+    hw->expansion.spin(vex::directionType::fwd, velPercent, vex::percentUnits::pct);
     vex::wait(150, vex::timeUnits::msec);
     hw->expansion.stop();
     vex::wait(170, vex::timeUnits::msec);

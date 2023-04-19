@@ -6,6 +6,15 @@
 class Telemetry {
 public:
     Telemetry(Hardware* hardware, RobotConfig* robotConfig);
+    
+    /// @brief  Manually sets the current robot position (assumess it calculated w/ odometry and encoders in autodrive)
+    /// @param position Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
+    void setManualPosition(std::pair<double,double> position);
+
+    /// @brief  Gets the current position that is updated manually using setManualPosition
+    /// @return Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
+    std::pair<double,double> getManualPosition();
+
 
     /// @brief              Calculates the distance (in inches) between to points
     /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
@@ -67,6 +76,8 @@ public:
 private:
     Hardware* hw;
     RobotConfig* rc;
+
+    std::pair<double, double> manualPosition; //based off encoder values + math in auto drive
     double gpsTotalDistance; 
     double drivetrainEncoderTotalDistance;
 

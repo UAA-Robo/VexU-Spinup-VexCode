@@ -1,6 +1,8 @@
 
 #include "Telemetry.h"
 
+
+
 Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
     hw = hardware;
@@ -8,6 +10,14 @@ Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 
     gpsTotalDistance = 0;
     drivetrainEncoderTotalDistance = 0;
+}
+
+void Telemetry::setManualPosition(std::pair<double,double> position) {
+    manualPosition = position;
+}
+
+std::pair<double,double> Telemetry::getManualPosition() {
+    return manualPosition;
 }
 
 double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
