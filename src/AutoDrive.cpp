@@ -72,7 +72,7 @@ void AutoDrive::rotateToHeading(double heading) {
     double differenceInHeading = heading - tm->getInertiaHeading();
     if (360 - (differenceInHeading) < differenceInHeading) directionMultiplier = -1; 
     
-    while (abs(heading - tm->getInertiaHeading()) > DEADBAND) {
+    while (std::abs(heading - tm->getInertiaHeading()) > DEADBAND) {
         //directionMultiplier == 1: rotate at to the left at ROTATIONVEL%. directionMultiplier == -1: rotate at to the right at ROTATIONVEL%.
         moveDriveTrain({0, -ROTATIONVEL * directionMultiplier}); 
     }   
