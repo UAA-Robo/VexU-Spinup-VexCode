@@ -32,7 +32,7 @@ protected:
     ///                     horizontalVelocityPercent = 50, the drivetrain will rotate to the right at 50% velocity.
     ///                     Any combiniatiion of non-zero verticalVelocityPercents and horizontalVelocityPercents 
     ///                     will cause the drivetrain to move in a arc.
-    /// @return     Returns a pair of doubles {leftVelocity, rightVelocity} that represent the actual velocities in RPM 
+    /// @return     Returns a pair of doubles {leftWheelsVelocity, rightWheelsVelocity} that represent the actual velocities in RPM 
     ///             (scaled to the gear-ratio) that the wheels on each drivetrain side need to be set to in order move as expected. 
     std::pair<double,double>  calculateDriveTrainVel(std::pair<double,double> velPercent); 
 

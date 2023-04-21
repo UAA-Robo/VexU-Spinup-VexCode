@@ -11,14 +11,14 @@ std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> 
         double rawRightVel = verticalVelPercent - horizontalVelPercent; //raw velocity of right wheels in drive train
 
         // Normalize the motor velocity
-        double maxRawVel = std::max(std::abs(rawLeftVel), std::abs(rawLeftVel));
+        double maxRawVel = std::max(std::abs(rawLeftVel), std::abs(rawRightVel));
         double normalizationFactor = maxRawVel > 1.0 ? maxRawVel : 1.0;
 
         double leftVelMultiplier = rawLeftVel / normalizationFactor;
         double rightVelMultiplier = rawRightVel / normalizationFactor;
 
 
-        double leftVel =  100 * leftVelMultiplier;
+        double leftVel =  100 * leftVelMultiplier; 
         double rightVel =  100 * rightVelMultiplier;
 
         return {leftVel, rightVel};
@@ -29,8 +29,8 @@ void Drive::moveDriveTrain(std::pair<double,double> velPercent)
 {
     std::pair<double,double> vel = calculateDriveTrainVel(velPercent);
 
-    hw->leftWheels.spin(vex::directionType::fwd, vel.first, vex::velocityUnits::rpm);
-    hw->leftWheels.spin(vex::directionType::fwd, vel.second, vex::velocityUnits::rpm);
+    hw->leftWheels.spin(vex::directionType::fwd, vel.first, vex::velocityUnits::pct);
+    hw->rightWheels.spin(vex::directionType::fwd, vel.second, vex::velocityUnits::pct);
 }
 
 
@@ -38,10 +38,10 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     double numberWheelRevolutions = distance / rc->WHEELCIRC;
     
     std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
-    hw->leftWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.first, vex::velocityUnits::rpm);
-    hw->rightWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.second, vex::velocityUnits::rpm);
+    hw->leftWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.first, vex::velocityUnits::pct, false);
+    hw->rightWheels.spinTo(numberWheelRevolutions * 360, vex::degrees, vel.second, vex::velocityUnits::pct);
     vex::wait(50, vex::timeUnits::msec);
-    while(hw->leftWheels.velocity(vex::velocityUnits::rpm) > 0 || hw->leftWheels.velocity(vex::velocityUnits::rpm));
+    while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct));
 }
 
 void Drive :: spinIntake(bool ISSTOP, bool ISINVERT) {
@@ -73,12 +73,12 @@ void Drive :: spinFlywheel(double voltage) {
 
 
 void Drive :: flickDisk() {
-    double velPercent = 100;
-    hw->launcher.spin(vex::directionType::fwd, velPercent, vex::percentUnits::pct);
-    vex::wait(150, vex::timeUnits::msec);
-    hw->launcher.spin(vex::directionType::rev, velPercent, vex::percentUnits::pct);
-    vex::wait(170, vex::timeUnits::msec);
-    
+
+    hw->launcher.spin(vex::forward,7,vex::volt);
+    wait(150,vex::msec);
+    hw->launcher.spin(vex::reverse,7,vex::volt);
+    wait(170,vex::msec);
+    hw->launcher.stop();
 }
 
 

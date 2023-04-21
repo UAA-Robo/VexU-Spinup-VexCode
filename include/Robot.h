@@ -9,6 +9,7 @@
 
 /*
 STANDARD UNITS:
+    Velocity in percent
     Encoders in Rotations
     Distance in Inches
     Heading/Angle in Degrees
@@ -26,6 +27,6 @@ private:
     RobotConfig* rc;
     Telemetry* tm;
 
-    //UserDrive* userDrive;
+    UserDrive* userDrive;
     AutoDrive* autoDrive;
 };
