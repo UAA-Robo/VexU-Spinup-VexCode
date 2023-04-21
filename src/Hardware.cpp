@@ -11,4 +11,12 @@ Hardware::Hardware() {
 
     driveTrain.setStopping(vex::brakeType::hold);
     smartDriveTrain.setStopping(vex::brakeType::hold);
+
+    //Calibrate sensors and wait while calibrating
+    gpsSensor.calibrate();
+    while (gpsSensor.isCalibrating()); 
+
+    inertiaSensor.calibrate();
+    while(inertiaSensor.isCalibrating());
+
 }

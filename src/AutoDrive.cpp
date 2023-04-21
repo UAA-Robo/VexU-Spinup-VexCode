@@ -8,22 +8,29 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    double const DRIVEVELPERCENT = 50;
-    double flywheelVoltPercent = 70;
+    //double const DRIVEVELPERCENT = 30;
+    //double flywheelVoltPercent = 70;
     //{-61.5, 35.5};
     std::pair<double,double> initPosition = tm->getGPSPosition();
+
 
     //tm->setInertiaHeadingToGPS(); 
     tm->setInertiaHeadingToGPS();
     tm->setManualPosition(initPosition); //TEST
+    
 
     //Set bot at rollers and spin intake reveerse to get them
     //spinIntake(false, true);
-    vex::wait(1000, vex::msec);
+    //vex::wait(1000, vex::msec);
     
     //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 3.8, initPosition.second}, true);
-    rotateAndDriveToPosition({initPosition.first, initPosition.second}, true);
+    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, false, true, false);
+
+
+    rotateAndDriveToPosition({initPosition.first, initPosition.second}, false, true, true);
+
+
+
     //moveDriveTrainDistance({DRIVEVELPERCENT, 0}, -3.8);
     
     /*
@@ -64,13 +71,13 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     }
 }
 
-void AutoDrive::rotateToHeading(double heading) {
-    const double DEADBAND = 1;
-    const double ROTATIONVEL = 20;
-    int directionMultiplier = 1;
-
+void AutoDrive::rotateToHeading(double heading, bool ISUSINGINERTIAHEADING) {
     //Corrects heading to be from 0-360 from the x axis counterclockwise
     heading  = fmod((fmod(heading,360) + 360), 360); //fmod is modulo on doubles: heading = (heading % 360 + 360) % 360
+
+    /* This was old for Pros  
+    const double DEADBAND = 1;
+    int directionMultiplier = 1;
 
     //Determines whether to rotate left or right based on the  shortest distance
     double differenceInHeading = heading - tm->getInertiaHeading();
@@ -78,60 +85,103 @@ void AutoDrive::rotateToHeading(double heading) {
     
     while (std::abs(heading - tm->getInertiaHeading()) > DEADBAND) {
         //directionMultiplier == 1: rotate at to the left at ROTATIONVEL%. directionMultiplier == -1: rotate at to the right at ROTATIONVEL%.
-        moveDriveTrain({0, -ROTATIONVEL * directionMultiplier}); 
+        moveDriveTrain({0, -rc->autoRotateVelPercent * directionMultiplier}); 
     }   
     hw->driveTrain.stop();
+    */
+
+    //turns heading from counterclockwise to clockwise bc smartDriveTrain.turnToHeading is measured clockwisee
+    heading = fmod(360.0 - heading, 360.0);
+    heading = (heading >= 0 ? heading : heading + 360.0);
+    if (ISUSINGINERTIAHEADING) 
+    {
+    hw->smartDriveTrain.turnToHeading(heading, vex::degrees, rc->autoRotateVelPercent, vex::velocityUnits::pct);
+    }
+    else 
+    {
+        const double DEADBAND = 1;
+        int directionMultiplier = 1;
+
+        //Determines whether to rotate left or right based on the  shortest distance
+        double differenceInHeading = heading - tm->getGPSHeading();
+        if (360 - (differenceInHeading) < differenceInHeading) directionMultiplier = -1; 
+        
+        while (std::abs(heading - tm->getGPSHeading()) > DEADBAND) {
+            //directionMultiplier == 1: rotate at to the left at ROTATIONVEL%. directionMultiplier == -1: rotate at to the right at ROTATIONVEL%.
+            moveDriveTrain({0, -rc->autoRotateVelPercent * directionMultiplier}); 
+        }   
+        hw->driveTrain.stop();
+
+    }
 }
 
-void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool ISBACKROTATION, bool ISUSINGGPS)
+void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool ISBACKROTATION, bool ISUSINGGPSPOSITION, bool ISUSINGINERTIAHEADING)
 {
     std::pair<double,double> currPos = tm->getManualPosition();
-    if (ISUSINGGPS) currPos = tm->getGPSPosition();
+    if (ISUSINGGPSPOSITION) currPos = tm->getGPSPosition();
     double heading = tm->getHeadingBtwnPoints(currPos, finalPosition);
 
     if(ISBACKROTATION) heading -= 180;
-    rotateToHeading(heading);
+    rotateToHeading(heading, ISUSINGINERTIAHEADING);
 
 }
 
-void AutoDrive::rotateToPosition(GameElement* gameElement, bool ISUSINGGPS) {
+void AutoDrive::rotateToPosition(GameElement* gameElement, bool ISUSINGGPSPOSITION, bool ISUSINGINERTIAHEADING) {
     std::pair<double,double> currPos = tm->getManualPosition();
-    if (ISUSINGGPS) currPos = tm->getGPSPosition();
+    if (ISUSINGGPSPOSITION) currPos = tm->getGPSPosition();
     double heading = tm->getHeadingBtwnPoints(currPos, gameElement->GetPositionWithMinOffset());
 
     if(gameElement->GetAlignment()) heading -= 180;
-    rotateToHeading(heading);
+    rotateToHeading(heading, ISUSINGINERTIAHEADING);
     
 }
 
-void AutoDrive::rotateAndDriveToPosition(GameElement* element, bool ISUSINGGPS) {
+void AutoDrive::rotateAndDriveToPosition(GameElement* element, bool ISUSINGGPSPOSITION, bool ISUSINGINERTIAHEADING) {
     std::pair<double,double> currPos = tm->getManualPosition();
-    if (ISUSINGGPS) currPos = tm->getGPSPosition();
+    if (ISUSINGGPSPOSITION) currPos = tm->getGPSPosition();
 
     std::pair<double, double> position = element->GetPositionWithMinOffset();
 
-    rotateToPosition(element, ISUSINGGPS); 
+    rotateToPosition(element, ISUSINGGPSPOSITION, ISUSINGINERTIAHEADING); 
     double distanceToPosition = tm->getDistanceBtwnPoints(currPos, position); //inches
     
-    moveDriveTrainDistance({70, 0}, distanceToPosition);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition);
 
     tm->setManualPosition(position);
 }
 
-void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool ISBACKTOPOSITION, bool ISUSINGGPS) {
+void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool ISBACKTOPOSITION, bool ISUSINGGPSPOSITION, bool ISUSINGINERTIAHEADING) {
+
+
+    rotateToPosition(position, ISBACKTOPOSITION, ISUSINGINERTIAHEADING); 
+
     std::pair<double,double> currPos = tm->getManualPosition();
-    if (ISUSINGGPS) currPos = tm->getGPSPosition();
+    if (ISUSINGGPSPOSITION) currPos = tm->getGPSPosition();
 
-    rotateToPosition(position, ISBACKTOPOSITION); 
+    hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("init x: %.1lf y: %.1lf", currPos.first, currPos.second);
 
     double distanceToPosition = tm->getDistanceBtwnPoints(currPos, position); //inches
+
+
+
+    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.print("distance: %.1lf", distanceToPosition);
+    vex::wait(200, vex::msec);
     
-    moveDriveTrainDistance({70, 0}, distanceToPosition); //Drive at 70% velocity
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition); //Drive at autoDriveVelPercent% velocity
+
+    std::pair<double,double> temp = tm->getGPSPosition();
+    hw->controller.Screen.setCursor(3,1);
+    hw->controller.Screen.print("init x: %.1lf y: %.1lf", temp.first, temp.second);
+    vex::wait(500, vex::msec);
+
     tm->setManualPosition(position);
 }
 
-void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot, bool ISUSINGGPS) {
+void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot, bool ISUSINGGPSPOSITION, bool ISUSINGINERTIAHEADING) {
     
-    rotateToPosition(goal, ISUSINGGPS);   //Red Goal
+    rotateToPosition(goal, ISUSINGGPSPOSITION, ISUSINGINERTIAHEADING);   //Red Goal
     shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
 }

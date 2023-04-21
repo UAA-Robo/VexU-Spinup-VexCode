@@ -66,7 +66,8 @@ void usercontrol(void) {
     icebot->drive();
     wait(20, msec); // Sleep the task for a short amount of time to prevent wasted resources.
   }
-}*/
+}
+*/
 
 //
 // Main will set up the competition functions and callbacks.

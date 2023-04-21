@@ -6,6 +6,9 @@
 class Telemetry {
 public:
     Telemetry(Hardware* hardware, RobotConfig* robotConfig);
+
+    /// @brief  Test function used to print GPS position and heading and inertia to controller/
+    void printGPSInertiaData();
     
     /// @brief  Manually sets the current robot position (assumess it calculated w/ odometry and encoders in autodrive)
     /// @param position Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
@@ -62,11 +65,15 @@ public:
     /// @return     Returns a pair of doubles {x, y} that represents the last current coordinate (where the origin is the center of the field)
     std::pair<double,double> getGPSPosition();
 
-    /// @brief      Calculates the current gps heading (positive counterclockwise from the x-axis) by taking a snapshot of inertia values using snapShotAverage()
-    /// @return     Returns a double represents the current heading in degrees (where the origin positive x axis) from 0-360
+    /// @brief      Calculates the current gps heading of the front of the robot (positive counterclockwise from the x-axis)
+    ///             by taking a snapshot of inertia values using snapShotAverage(). Assumes the GPS is on the back of the bot,
+    ///             facing backwards.
+    /// @return     Returns a double represents the current heading in degrees (where the origin positive x axis) from 0-360.
     double getGPSHeading();
 
-    /// @brief      Calculates the current inertia heading (positive counterclockwise from the x-axis) by taking a snapshot of inertia values using snapShotAverage()
+    /// @brief      Calculates the current inertia heading of the front of the robot (positive counterclockwise from the x-axis) 
+    ///             by taking a snapshot of inertia values using snapShotAverage(). Assumes the front of the inertia sensor is facing
+    ///             the front of the bot.
     /// @return     Returns a double represents the current heading in degrees (where the origin positive x axis) from 0-360
     double getInertiaHeading();
 

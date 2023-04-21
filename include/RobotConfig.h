@@ -4,9 +4,11 @@
 class RobotConfig {
 public:
     RobotConfig(Hardware* hw);
-    const int WHEELCIRC = 12.57; //Drive train wheel circumference in inches
+    const double WHEELCIRC = 4 * M_PI; //Drive train wheel circumference in inches
     double lowFlywheelVoltUserDrive = 8.0;
     double highFlywheelVoltUserDrive = 12.0;
     const int SNAPSHOTSIZE = 1600;
+    double autoDriveVelPercent = 20;
+    double autoRotateVelPercent = 20;
 
 };

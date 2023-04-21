@@ -12,6 +12,23 @@ Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
     drivetrainEncoderTotalDistance = 0;
 }
 
+void Telemetry::printGPSInertiaData() {
+    hw->controller.Screen.clearScreen();
+
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("gps x: %.1f y: %.1f", getGPSPosition().first, getGPSPosition().second);
+    vex::wait(200,vex::msec);
+
+    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.print("gps heading: %.1f", getGPSHeading());
+    vex::wait(200,vex::msec);
+
+    hw->controller.Screen.setCursor(3,1);
+    hw->controller.Screen.print("inertia heading: %.1f", getInertiaHeading());
+    vex::wait(200,vex::msec);
+    
+}
+
 void Telemetry::setManualPosition(std::pair<double,double> position) {
     manualPosition = position;
 }
@@ -121,12 +138,12 @@ double Telemetry::getGPSHeading()
 
     for (int i = 0; i < rc->SNAPSHOTSIZE; ++i)
     {
-        // Correct heading to be always be positive counterclockwise from the x axis bc the gps sensor reads clockwise form the positive y axis
+        
         heading = hw->gpsSensor.heading();
-        if (heading > 0)
-            heading = 270 - heading;
-        else
-            heading = -heading - 90;
+        
+        // Correct heading to be always be positive counterclockwise from the x axis bc the gps sensor reads clockwise form the positive y axis
+        heading = fmod(90 - heading, 360.0); 
+        heading = (heading >= 0 ? heading : heading + 360.0);
 
         snapshot.push_back(heading);
     }
@@ -141,12 +158,12 @@ double Telemetry::getInertiaHeading()
 
     for (int i = 0; i < rc->SNAPSHOTSIZE; ++i)
     {
-        // Correct heading to be always be positive counterclockwise from the x axis bc the inertia sensor reads clockwise form the x axis
+
         heading = hw->inertiaSensor.heading();
-        if (heading > 0)
-            heading = 360 - heading;
-        else
-            heading = -heading;
+
+        // Correct heading to be always be positive counterclockwise from the x axis bc the inertia sensor reads clockwise form the x axis
+        heading = fmod(360.0 - heading, 360.0);
+        heading = (heading >= 0 ? heading : heading + 360.0);
 
         snapshot.push_back(heading);
     }
@@ -156,7 +173,12 @@ double Telemetry::getInertiaHeading()
 
 void Telemetry::setInertiaHeadingToGPS()
 {
-    hw->inertiaSensor.setHeading(getGPSHeading(), vex::degrees);
+    double heading = getGPSHeading();
+    // Changes heading from counterclockwise from the x axis (as returned by getGPSHeading) to clockwise because inertia sensor reads clockwise
+    heading = fmod(360.0 - heading, 360.0);
+    heading = (heading >= 0 ? heading : heading + 360.0);
+
+    hw->inertiaSensor.setHeading(heading, vex::degrees);
 }
 
 double Telemetry::snapShotAverage(std::vector<double> snapshot)
