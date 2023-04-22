@@ -3,7 +3,6 @@
 AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry): Drive(hardware, robotConfig, telemetry) {
     
 }
-
 void AutoDrive::drive() {
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
@@ -234,4 +233,30 @@ void AutoDrive::rollRoller(vex::color ourColor)
   //      spinIntake(false, false, 8);
   //  }
    // spinIntake(true, false);
+}
+void AutoDrive::centerOnDisk(){
+    int isRight = 1;
+    this->hw->visionSensor.takeSnapshot(1);
+    // 100 is a safe value for size of disk. Tested in poor lighting, please fine tune in better lighting.
+    if(this->hw->visionSensor.largestObject.width > 100){
+        // diff is the offset from the middle of the screen. Correct to 320 once sensor is centered over intake.
+        // 75 / 640 is Camera FOV / Camera Resolution. This should allow for a pix to deg conversion.
+        int diff = (75.f / 640.f) * (this->hw->visionSensor.largestObject.centerX - 200);
+        // Minimum turn dist
+        int minTurn = 5;
+        // Correct for direction
+        if(diff < 0) isRight = -1;
+        // Return if Disk is close enough to the center of the screen
+        if(diff < 2){
+            return;
+        }else if(std::fabs(diff) < minTurn){
+            // Negative value is to prevent the robot from always rotating away from the disk
+            // We overshoot the rotation, because the robot can't turn small angles accurately, but can with large angles
+            // So we overshoot so we can correct the angle with a big turn.
+            rotateToRelativeAngle(-(diff + minTurn * isRight));
+            rotateToRelativeAngle(minTurn * isRight);
+        }else{
+            rotateToRelativeAngle(-diff);
+        }
+    }
 }
