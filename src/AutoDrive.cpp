@@ -20,9 +20,11 @@ void AutoDrive::drive() {
     */
 
 
-    //tm->setInertiaHeadingToGPS(); 
-    tm->setInertiaHeadingToGPS();
-    tm->setManualPosition(initPosition); //TEST
+
+    std::pair<double,double> initPosition = {0, 0};
+
+    tm->setManualPosition(initPosition); 
+    tm->setManualHeading(180);
     
 
     //Set bot at rollers and spin intake reveerse to get them
@@ -30,10 +32,10 @@ void AutoDrive::drive() {
     vex::wait(1000, vex::msec);
     
     //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, false, true, false);
+    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, true);
 
 
-    rotateAndDriveToPosition({initPosition.first, initPosition.second}, false, true, true);
+
 
     
     
