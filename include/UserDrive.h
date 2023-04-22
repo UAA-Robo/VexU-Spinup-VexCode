@@ -11,7 +11,7 @@ private:
 
     int flywheelVoltage = 8000;
 
-    int mirrorDrive;
+    int mirrorDrive = 1;
 
     /// @brief  Controls drivetrain based on controller joysticks. Up/down on the left joystick is forward/backward.
     //          Left/right on the right joystick is turning.

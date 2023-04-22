@@ -1,5 +1,6 @@
 #include "RobotConfig.h"
 
-RobotConfig::RobotConfig(Hardware* hw) {
-
+RobotConfig::RobotConfig(Hardware* hardware)
+{
+    hw = hardware;
 }
