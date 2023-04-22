@@ -19,4 +19,5 @@ Hardware::Hardware() {
     inertiaSensor.calibrate();
     while(inertiaSensor.isCalibrating());
 
+    opticalSensor.integrationTime(100);
 }

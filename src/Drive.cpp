@@ -53,14 +53,14 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct)); //Blocks other tasks from starting 
 }
 
-void Drive :: spinIntake(bool ISSTOP, bool ISINVERT) {
+void Drive :: spinIntake(bool ISSTOP, bool ISINVERT, int volts) {
     if (ISSTOP) {
         hw->intake.stop();
     }else {
         if(ISINVERT){
-            hw->intake.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+            hw->intake.spin(vex::directionType::rev, volts, vex::voltageUnits::volt);
         }else{
-            hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
+            hw->intake.spin(vex::directionType::fwd, volts, vex::voltageUnits::volt);
         }
     }
 }

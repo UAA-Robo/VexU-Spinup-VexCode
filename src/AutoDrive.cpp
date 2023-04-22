@@ -20,11 +20,9 @@ void AutoDrive::drive() {
     */
 
 
-    //initial position
-    std::pair<double,double> initPosition = {-61.5, 35.5};
-    tm->setManualHeading(180);
-    tm->setManualPosition(initPosition);
-
+    //tm->setInertiaHeadingToGPS(); 
+    tm->setInertiaHeadingToGPS();
+    tm->setManualPosition(initPosition); //TEST
     
 
     //Set bot at rollers and spin intake reveerse to get them
@@ -32,9 +30,10 @@ void AutoDrive::drive() {
     vex::wait(1000, vex::msec);
     
     //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
+    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, false, true, false);
 
 
+    rotateAndDriveToPosition({initPosition.first, initPosition.second}, false, true, true);
 
     
     
@@ -186,20 +185,24 @@ void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int nu
 }
 
 void AutoDrive::usePathing(){
-    rc->setTeamColor(tm->getGPSPosition());
+    rc->setTeamColor({1, -1});
+
+   // hw->controller.Screen.print("path algo reached");
 
     switch(rc->quadrant){
         case 1:
+           // hw->controller.Screen.print("q1 code reached");
             q1PathAlgo(rc->teamColor);
         break;
         case 2:
-            q2PathAlgo(rc->teamColor);
+            //q2PathAlgo(rc->teamColor);
         break;
         case 3:
-            q3PathAlgo(rc->teamColor);
+           // q3PathAlgo(rc->teamColor);
         break;
         case 4:
-            q3PathAlgo(rc->teamColor);
+            //hw->controller.Screen.print("path algo reached");
+           q4PathAlgo(rc->teamColor);
         break;
     }
 }
@@ -209,10 +212,24 @@ void AutoDrive::q1PathAlgo(vex::color ourColor)
     rollRoller(ourColor);
 }
 
+void AutoDrive::q4PathAlgo(vex::color ourColor)
+{
+    rollRoller(ourColor);
+}
+
 void AutoDrive::rollRoller(vex::color ourColor)
 {
-    while(hw->opticalSensor.color() != ourColor){
-        spinIntake(false, false);
+    hw->opticalSensor.setLight(vex::ledState::on);
+   while(true){
+        hw->controller.Screen.clearScreen();
+        hw->controller.Screen.setCursor(1,1);
+        hw->controller.Screen.print("%.2f", hw->opticalSensor.hue());
+        vex::wait(500, vex::timeUnits::msec);
     }
-    spinIntake(true, false);
+
+    
+  //  while(hw->opticalSensor.color() != ourColor){
+  //      spinIntake(false, false, 8);
+  //  }
+   // spinIntake(true, false);
 }
