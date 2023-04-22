@@ -49,9 +49,8 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
-  while(!isControlled){
-    icebot->drive();
-    vex::wait(20, vex::msec);
+  if(!isControlled){
+    icebot->driveAuto();
   }
 }
 
