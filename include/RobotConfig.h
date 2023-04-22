@@ -11,6 +11,7 @@ public:
     const int SNAPSHOTSIZE = 1600;
     double autoDriveVelPercent = 20;
     double autoRotateVelPercent = 20;
+    const double DRIVETRAINWIDTH = 11;//distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels) 
 private:
     Hardware* hw;
 

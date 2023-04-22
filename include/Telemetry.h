@@ -18,6 +18,14 @@ public:
     /// @return Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
     std::pair<double,double> getManualPosition();
 
+    /// @brief  Manually sets the current robot heading (assumess it calculated w/ odometry and encoders in autodrive)
+    /// @param position Double of the heading (0-360) where positive is counterclockwise from the positive x axis.
+    void setManualHeading(double heading);
+
+    /// @brief  Gets the current heading that is updated manually using setManualHeading
+    /// @return Double of the heading (0-360) where positive is counterclockwise from the positive x axis.
+    double getManualHeading();
+
 
     /// @brief              Calculates the distance (in inches) between to points
     /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
@@ -85,6 +93,7 @@ private:
     RobotConfig* rc;
 
     std::pair<double, double> manualPosition; //based off encoder values + math in auto drive
+    double manualHeading; //based off encoder values + math in auto drive
     double gpsTotalDistance; 
     double drivetrainEncoderTotalDistance;
 
