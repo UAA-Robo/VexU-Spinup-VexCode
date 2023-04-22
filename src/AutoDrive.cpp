@@ -201,3 +201,35 @@ void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int nu
     rotateToPosition(goal);   //Red Goal
     shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
 }
+
+void AutoDrive::usePathing(){
+    rc->setTeamColor(tm->getGPSPosition());
+
+    switch(rc->quadrant){
+        case 1:
+            q1PathAlgo(rc->teamColor);
+        break;
+        case 2:
+            q2PathAlgo(rc->teamColor);
+        break;
+        case 3:
+            q3PathAlgo(rc->teamColor);
+        break;
+        case 4:
+            q3PathAlgo(rc->teamColor);
+        break;
+    }
+}
+
+void AutoDrive::q1PathAlgo(vex::color ourColor)
+{
+    rollRoller(ourColor);
+}
+
+void AutoDrive::rollRoller(vex::color ourColor)
+{
+    while(hw->opticalSensor.color() != ourColor){
+        spinIntake(false, false);
+    }
+    spinIntake(true, false);
+}

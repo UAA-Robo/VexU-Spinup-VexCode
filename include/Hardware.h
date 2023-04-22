@@ -46,7 +46,4 @@ public:
     vex::motor intakeTopRight = vex::motor(vex::PORT20, vex::ratio6_1, true);
 
     vex::motor_group intake = vex::motor_group(intakeBackLeft, intakeMiddlLeft, intakeMiddleRight, intakeTopRight); //Use this
-
-
-
 };

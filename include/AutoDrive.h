@@ -56,4 +56,16 @@ private:
     /// @param numDisksToShoot  Integer number of disks in the hopper to shoot (1-3).
     void rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot);
 
+    void rollRoller(vex::color ourColor);
+
+    void usePathing(); 
+
+    void q1PathAlgo(vex::color ourColor);
+
+    void q2PathAlgo(vex::color ourColor);
+
+    void q3PathAlgo(vex::color ourColor);
+
+    void q4PathAlgo(vex::color ourColor);
+
 };
