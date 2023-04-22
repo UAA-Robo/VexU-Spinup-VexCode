@@ -1,5 +1,10 @@
 #include "Drive.h"
-
+Drive::Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry) {
+    hw = hardware;
+    rc = robotConfig;
+    tm = telemetry;
+    mp = new Map();
+}
 
 std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> velPercent) //{verticalVelPercent, horizontalVelPercent}
 {

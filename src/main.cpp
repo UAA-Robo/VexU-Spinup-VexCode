@@ -46,9 +46,11 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
+/*
 void autonomous(void) {
   icebot->driveAuto();
 }
+*/
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -60,14 +62,14 @@ void autonomous(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-/*
+
 void usercontrol(void) {
   while (1) {
     icebot->drive();
     wait(20, msec); // Sleep the task for a short amount of time to prevent wasted resources.
   }
 }
-*/
+
 
 //
 // Main will set up the competition functions and callbacks.
@@ -81,8 +83,8 @@ int main() {
   pre_auton();
 
   //TESTING
-  autonomous();
-  //usercontrol();
+  //autonomous();
+  usercontrol();
 
 
   // Prevent main from exiting with an infinite loop.

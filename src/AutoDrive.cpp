@@ -1,10 +1,7 @@
 #include "AutoDrive.h"
 
-AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry) {
-    hw = hardware;
-    rc = robotConfig;
-    tm = telemetry;
-    mp = new Map();
+AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry): Drive(hardware, robotConfig, telemetry) {
+    
 }
 
 void AutoDrive::drive() {

@@ -1,11 +1,11 @@
 #include "Drive.h"
 
 class UserDrive : public Drive{
-    public:
-    UserDrive(Hardware* hardware, Telemetry* telemetry);
+public:
+    UserDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry);
     void drive();
 
-    private:
+private:
     
     const int deadzone = 5;
 
