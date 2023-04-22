@@ -15,6 +15,7 @@ using namespace vex;
 // A global instance of competition
 competition Competition;
 Robot* icebot;
+bool isControlled;
 
 // define your global instances of motors and other devices here
 
@@ -46,11 +47,14 @@ void pre_auton(void) {
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
 
-/*
+
 void autonomous(void) {
-  icebot->driveAuto();
+  while(!isControlled){
+    icebot->drive();
+    vex::wait(20, vex::msec);
+  }
 }
-*/
+
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
@@ -64,9 +68,9 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  while (1) {
+  while (isControlled) {
     icebot->drive();
-    wait(20, msec); // Sleep the task for a short amount of time to prevent wasted resources.
+    vex::wait(20, vex::msec); // Sleep the task for a short amount of time to prevent wasted resources.
   }
 }
 
@@ -75,6 +79,8 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
+  isControlled = false;
+  
   // Set up callbacks for autonomous and driver control periods.
   //Competition.autonomous(autonomous);
   //Competition.drivercontrol(usercontrol);
@@ -83,7 +89,7 @@ int main() {
   pre_auton();
 
   //TESTING
-  //autonomous();
+  autonomous();
   usercontrol();
 
 
