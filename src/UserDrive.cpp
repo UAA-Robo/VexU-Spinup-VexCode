@@ -37,7 +37,6 @@ void UserDrive::driveTrainControls(){
     }
 
     moveDriveTrain({forwardBackward, turning});
-
 }
 
 void UserDrive::intakeControls(){

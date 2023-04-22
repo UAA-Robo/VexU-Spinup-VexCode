@@ -84,7 +84,7 @@ int main() {
 
   //TESTING
   //autonomous();
-  usercontrol();
+ // usercontrol();
 
 
   // Prevent main from exiting with an infinite loop.
