@@ -38,7 +38,7 @@ void AutoDrive::drive() {
 
     
     
-    rotateAndShoot(mp->mapElements.at(43), rc->lowFlywheelVoltUserDrive, 2);
+    rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
     /*
     
     //Spin intake to pick up disks
@@ -63,7 +63,7 @@ void AutoDrive::drive() {
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {   
-    double desiredVoltage = velocityPercent / 100 * 12000;
+    double desiredVoltage = velocityPercent / 100.0 * 12.0;
     for(int i = 0; i < numFlicks; ++i)
     {
         spinFlywheel(desiredVoltage);
