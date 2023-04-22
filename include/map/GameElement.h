@@ -32,7 +32,7 @@ private:
     double minYInteractableOffset;
     bool isBackAligned;
 
-public:
+protected:
     /// @brief Game Element Constructor. This class is designed to have child classes built off of it. Allowing for easy customization and handling of map elements.
     /// @param id ID of game element. This way game elements can be uniquely identified.
     /// @param x X Component of the position
@@ -69,7 +69,7 @@ public:
         this->minYInteractableOffset = minYInterOffset;
         this->maxYInteractableOffset = maxYInterOffset;
     }
-
+public:
     // Setters
 
     void SetPosition(double x, double y) { this->position = std::pair<double, double>(x, y); }
