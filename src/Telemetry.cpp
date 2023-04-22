@@ -37,6 +37,14 @@ std::pair<double,double> Telemetry::getManualPosition() {
     return manualPosition;
 }
 
+void Telemetry::setManualHeading(double heading) {
+    manualHeading = heading;
+}
+
+double Telemetry::getManualHeading() {
+    return manualHeading;
+}
+
 double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
 {
     double distanceToFinalPosition = sqrt(pow((finalPos.first - initPos.first), 2) + pow((finalPos.second - initPos.second), 2));
