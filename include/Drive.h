@@ -64,7 +64,7 @@ protected:
     /// @brief  Spins the intake indefinitely unless ISSTOP is passed as true.
     /// @param ISSTOP       If true, stops the intake.
     /// @param ISINVERT     If true, runs the intake in reverse;
-    void spinIntake(bool ISSTOP = false, bool ISINVERT = false);
+    void spinIntake(bool ISSTOP = false, bool ISINVERT = false, int volts=12);
 
     //void (Drive::*spinIntakePtr)(bool, bool) = &Drive::spinIntake;
 

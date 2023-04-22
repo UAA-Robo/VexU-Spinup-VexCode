@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "chrono": "cpp",
-        "__mutex_base": "cpp"
+        "__mutex_base": "cpp",
+        "*.tcc": "cpp"
     }
 }
