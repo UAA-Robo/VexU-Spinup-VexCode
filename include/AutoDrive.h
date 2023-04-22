@@ -13,8 +13,8 @@ private:
     bool IS_USING_GPS_HEADING = false;
     bool IS_USING_GPS_POSITION = false;
     bool IS_USING_INERTIA_HEADING = false;
-    bool IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
-    bool IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
+    bool IS_USING_ENCODER_POSITION = true; //If true, requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
+    bool IS_USING_ENCODER_HEADING = true;   //If true, requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     /// @brief Shoots after desired velocity is reached 
     /// @param velocity The desired velocity 
