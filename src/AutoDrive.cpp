@@ -17,7 +17,9 @@ void AutoDrive::drive() {
 
     rotateAndDriveToPosition({-5, 0}, true);
     */
-
+    /* // Disk Centering Test
+    while(1)    centerOnDisk();
+    */
 
 
     std::pair<double,double> initPosition = {0, 0};
