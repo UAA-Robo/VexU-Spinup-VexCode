@@ -14,5 +14,7 @@ public:
     double autoRotateVelPercent = 20;
     vex::color teamColor;
     int quadrant;
-    
+    private:
+    Hardware* hw;
+
 };

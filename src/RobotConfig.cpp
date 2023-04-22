@@ -1,7 +1,8 @@
 #include "RobotConfig.h"
 
-RobotConfig::RobotConfig(Hardware* hw) {
-
+RobotConfig::RobotConfig(Hardware* hardware)
+{
+    hw = hardware;
 }
 
 void RobotConfig::setTeamColor(std::pair<double, double> locale){
