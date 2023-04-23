@@ -88,15 +88,20 @@ void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool IS
 }
 
 void AutoDrive::rotateToPosition(GameElement* gameElement) {
-    std::pair<double,double> currPos = tm->getManualPosition();
-    if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
-    double heading = tm->getHeadingBtwnPoints(currPos, gameElement->GetPositionWithMinOffset());
 
-    if(gameElement->GetAlignment()) heading -= 180;
-    rotateToHeading(heading);
+    rotateToPosition(gameElement->GetPosition(), gameElement->GetAlignment());
+
+    // std::pair<double,double> currPos = tm->getManualPosition();
+    // if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
+    // double heading = tm->getHeadingBtwnPoints(currPos, gameElement->GetPositionWithMinOffset());
+
+    // if(gameElement->GetAlignment()) heading -= 180;
+    // rotateToHeading(heading);
 }
 
 void AutoDrive::rotateAndDriveToPosition(GameElement* element) {
+
+    
     std::pair<double,double> currPos = tm->getManualPosition();
     if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
 
