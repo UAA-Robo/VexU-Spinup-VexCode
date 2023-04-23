@@ -19,27 +19,29 @@ void AutoDrive::drive() {
     rotateAndDriveToPosition({-5, 0}, true);
     */
 
-
-
-    std::pair<double,double> initPosition = {0, 0};
+    
+    std::pair<double,double> initPosition = {15, -59};
 
     tm->setManualPosition(initPosition); 
-    tm->setManualHeading(180);
+    tm->setManualHeading(0);
+    
     
 
     //Set bot at rollers and spin intake reveerse to get them
-    spinIntake(false, true);
-    vex::wait(1000, vex::msec);
+    //spinIntake(false, true);
+    //vex::wait(1000, vex::msec);
     
-    //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, true);
+    //Drive backward and shoot 2 disks
+    rotateAndDriveToPosition({(mp->mapElements.at(44)->GetPosition().first-initPosition.first)+4.9, initPosition.second});
+    tm->setManualPosition({mp->mapElements.at(44)->GetPosition().first-initPosition.first, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-initPosition.first, mp->mapElements.at(44)->GetPosition().second-1});
 
 
 
 
     
     
-    rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
+    //rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
     /*
     
     //Spin intake to pick up disks
