@@ -10,6 +10,8 @@ public:
     void drive();
 
 private:
+    vex::vision::signature yellow_disk = vex::vision::signature(1, -715,-291, -503, -4109, -3709, -3909, 5.7, 0);
+
     bool IS_USING_GPS_HEADING = false;
     bool IS_USING_GPS_POSITION = false;
     bool IS_USING_INERTIA_HEADING = false;
@@ -71,5 +73,8 @@ private:
     void q1BluePathAlgo(vex::color ourColor);   //Sid
     
     void q4BluePathAlgo(vex::color ourColor);   //Granny
+
+    /// @brief Centers the robot on the biggest yellow blob using the vision sensor.
+    void centerOnDisk();
 
 };
