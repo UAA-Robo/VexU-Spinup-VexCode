@@ -64,6 +64,8 @@ private:
 
     void q2RedPathAlgo(vex::color ourColor); //Granny
 
+    void q3BluePathAlgo(vex::color ourColor); //Sid?
+
     void q4RedPathAlgo(vex::color ourColor);    //Sid
 
     void q1BluePathAlgo(vex::color ourColor);   //Sid
