@@ -5,61 +5,7 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    IS_USING_GPS_HEADING = false;
-    IS_USING_GPS_POSITION = false;
-    IS_USING_INERTIA_HEADING = false;
-    IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
-    IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
-
-    /* //TEST
-    std::pair<double,double> initPosition = {0, 0};
-    tm->setManualHeading(90);
-    tm->setManualPosition(initPosition);
-
-    rotateAndDriveToPosition({-5, 0}, true);
-    */
-
-
-
-    std::pair<double,double> initPosition = {0, 0};
-
-    tm->setManualPosition(initPosition); 
-    tm->setManualHeading(180);
-    
-
-    //Set bot at rollers and spin intake reveerse to get them
-    spinIntake(false, true);
-    vex::wait(1000, vex::msec);
-    
-    //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 20, initPosition.second}, true);
-
-
-
-
-    
-    
-    rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
-    /*
-    
-    //Spin intake to pick up disks
-    spinIntake(); 
-
-    //Pick up 3 disks and move a bit past last one
-    rotateAndDriveToPosition(mp->mapElements.at(29));
-    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
-
-    //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 2);
-
-    //Pick up 3 disks and move a bit past last one
-    rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
-
-    //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 3);
-    */
-
+    usePathing();
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -187,51 +133,85 @@ void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int nu
 }
 
 void AutoDrive::usePathing(){
-    rc->setTeamColor({1, -1});
+    rc->setTeamColor(tm->getGPSPosition());
 
    // hw->controller.Screen.print("path algo reached");
 
-    switch(rc->quadrant){
-        case 1:
-           // hw->controller.Screen.print("q1 code reached");
-            q1PathAlgo(rc->teamColor);
-        break;
-        case 2:
-            //q2PathAlgo(rc->teamColor);
-        break;
-        case 3:
-           // q3PathAlgo(rc->teamColor);
-        break;
-        case 4:
-            //hw->controller.Screen.print("path algo reached");
-           q4PathAlgo(rc->teamColor);
-        break;
-    }
+    if (rc->quadrant == 2 && rc->teamColor == vex::color::red) q2RedPathAlgo(rc->teamColor);
+    else if (rc->quadrant == 4 && rc->teamColor == vex::color::red) q4RedPathAlgo(rc->teamColor);
+    else if (rc->quadrant == 1 && rc->teamColor == vex::color::blue) q1BluePathAlgo(rc->teamColor);
+    else if (rc->quadrant == 4 && rc->teamColor == vex::color::blue) q4BluePathAlgo(rc->teamColor);
 }
 
-void AutoDrive::q1PathAlgo(vex::color ourColor)
+void AutoDrive::q2RedPathAlgo(vex::color ourColor) //Should be Granny
+{
+    IS_USING_GPS_HEADING = false;
+    IS_USING_GPS_POSITION = false;
+    IS_USING_INERTIA_HEADING = false;
+    IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
+    IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
+
+
+    std::pair<double,double> initPosition = {-61.5, 38};
+
+    tm->setManualPosition(initPosition); 
+    tm->setManualHeading(180);
+    
+
+    //Set bot at rollers and spin intake reveerse to get them
+    rollRoller(vex::color::blue);
+
+    //Drive backward and shoot 2 diskds
+    rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
+
+
+    rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
+    /*
+    
+    //Spin intake to pick up disks
+    spinIntake(); 
+
+    //Pick up 3 disks and move a bit past last one
+    rotateAndDriveToPosition(mp->mapElements.at(29));
+    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
+
+    //Shoot 3 disks
+    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 2);
+
+    //Pick up 3 disks and move a bit past last one
+    rotateAndDriveToPosition(mp->mapElements.at(22));
+    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
+
+    //Shoot 3 disks
+    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 3);
+    */
+    
+}
+
+void AutoDrive::q4RedPathAlgo(vex::color ourColor) //Should be Sid
 {
     rollRoller(ourColor);
 }
 
-void AutoDrive::q4PathAlgo(vex::color ourColor)
+void AutoDrive::q1BluePathAlgo(vex::color ourColor) //Should be Sid
+{
+    rollRoller(ourColor);
+}
+void AutoDrive::q4BluePathAlgo(vex::color ourColor) //Should be Granny
 {
     rollRoller(ourColor);
 }
 
 void AutoDrive::rollRoller(vex::color ourColor)
 {
-    hw->opticalSensor.setLight(vex::ledState::on);
-   while(true){
-        hw->controller.Screen.clearScreen();
-        hw->controller.Screen.setCursor(1,1);
-        hw->controller.Screen.print("%.2f", hw->opticalSensor.hue());
-        vex::wait(500, vex::timeUnits::msec);
-    }
+    const double HUE_DEADBAND = 10;
+    const double intakeVolt = 9; //reaches 150 rpm to match the optical sensor rate
+    double oppositeHue;
 
-    
-  //  while(hw->opticalSensor.color() != ourColor){
-  //      spinIntake(false, false, 8);
-  //  }
-   // spinIntake(true, false);
+    if (ourColor == vex::color::red) oppositeHue = 220;   //red hue = 5
+    else if (ourColor == vex::color::blue) oppositeHue = 5; //blue hue = 220
+
+    spinIntake(false, true, 9);
+    while(fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND); //Spin while seeing opposite color (outside deadband)
+    spinIntake(true, true);
 }
