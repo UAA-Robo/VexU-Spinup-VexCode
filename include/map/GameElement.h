@@ -52,7 +52,7 @@ protected:
         double rotation,
         char teamColor,
         char type,
-        bool BackTowardsTarget = true,
+        bool BackTowardsTarget = false,
         double minXInterOffset = 0,
         double maxXInterOffset = 0,
         double minYInterOffset = 0,
@@ -63,7 +63,7 @@ protected:
         this->rotation = rotation;
         this->teamColor = teamColor;
         this->type = type;
-        this->isBackAligned = true;
+        this->isBackAligned = BackTowardsTarget;
         this->minXInteractableOffset = minXInterOffset;
         this->maxXInteractableOffset = maxXInterOffset;
         this->minYInteractableOffset = minYInterOffset;

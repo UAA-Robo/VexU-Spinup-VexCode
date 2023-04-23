@@ -56,7 +56,7 @@ class Map{
             addDisk(70.2 - 23.08,  23.08 - 70.2,    'N', 1);                //13   //Idx 1
             addDisk(70.2 - 34.86,  34.86 - 70.2,    'N', 3);                //14   //Idx 2
             addDisk(70.2 - 46.64,  46.64 - 70.2,    'N', 1);                //15   //Idx 3
-            addDisk(70.2 - 58.42,  70.2 - 58.42, 'N', 1);                //16   //Idx 4
+            addDisk(70.2 - 58.42,  72.00 - 58.42, 'N', 1);                //16   //Idx 4
             addDisk(70.2 - 81.99,  81.99 - 70.2,    'N', 1);                //17   //Idx 5
             addDisk(70.2 - 93.77,  93.77 - 70.2,    'N', 1);                //18   //Idx 6
             addDisk(70.2 - 105.35, 105.35 - 70.2,   'N', 3);                //19   //Idx 7
@@ -89,10 +89,10 @@ class Map{
 
             // Rollers need to be offset by 4.9
             //Coordinate at the middle of the roller
-            addRoller(dbpair(70.2 - 29.43, 0.39 - 70.2),    dbpair(70.2 - 29.43 , 0.39 - 70.2),   'N'); //44 //Q4 roller
+            addRoller(dbpair(70.2 - 29.43, 0.39 - 70.2),    dbpair(70.2 - 29.43 , 0.39 - 70.2),   'N'); //44 //Q3 roller
             addRoller(dbpair(70.2 - 0.39, 29.43 - 70.2),    dbpair(70.2 - 0.39, 29.43 - 70.2),    'N'); //45
             addRoller(dbpair(70.2 - 140.02, 110.98 - 70.2), dbpair(70.2 - 140.02, 110.98 - 70.2), 'N'); //46
-            addRoller(dbpair(70.2 - 118.49, 140.02 - 70.2), dbpair(70.2 - 106.6, 140.02 - 70.2), 'N'); //47 Q2?
+            addRoller(dbpair(70.2 - 110.98, 140.02 - 70.2), dbpair(70.2 - 110.98, 140.02 - 70.2), 'N'); //47
         }
 
         /*

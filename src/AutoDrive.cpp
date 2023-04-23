@@ -139,14 +139,15 @@ void AutoDrive::usePathing(){
    if(rc->teamColor == vex::color::red){
         switch(rc->quadrant){
             case 1:
-
             break;
+
             case 2:
             q2RedPathAlgo(rc->teamColor, false);
             break;
-            case 3:
 
+            case 3:
             break;
+
             case 4:
             q4RedPathAlgo(rc->teamColor, false);
             break;
@@ -156,12 +157,14 @@ void AutoDrive::usePathing(){
             case 1:
 
             break;
+
             case 2:
             q2BluePathAlgo(rc->teamColor, false);
             break;
-            case 3:
 
+            case 3:  
             break;
+
             case 4:
             q4BluePathAlgo(rc->teamColor, false);
             break;
@@ -176,6 +179,7 @@ void AutoDrive::usePathing(){
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
+    double flywheelVelPercent = 65;
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
     IS_USING_INERTIA_HEADING = false;
@@ -190,32 +194,35 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     
 
     //Set bot at rollers and spin intake reveerse to get them
-    rollRoller(vex::color::blue);
+    rollRoller(vex::color::red);
 
     //Drive backward and shoot 2 diskds
     rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
 
 
-    rotateAndShoot(mp->mapElements.at(43), rc->flywheelVelPercentAuto, 2);
-    /*
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+
     
     //Spin intake to pick up disks
     spinIntake(); 
 
     //Pick up 3 disks and move a bit past last one
-    rotateAndDriveToPosition(mp->mapElements.at(29));
-    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
+    rotateAndDriveToPosition(mp->mapElements.at(25));
+    hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("%d", mp->mapElements.at(25)->GetAlignment());
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
 
     //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 2);
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({DRIVEVELPERCENT, 0}, 4);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
 
     //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVoltPercent, 3);
-    */
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    
     
 }
 
