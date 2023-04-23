@@ -62,13 +62,15 @@ private:
 
     void usePathing(); 
 
-    void q1PathAlgo(vex::color ourColor);
+    
 
-    void q2PathAlgo(vex::color ourColor);
+    void q2RedPathAlgo(vex::color ourColor); //Granny
 
-    void q3PathAlgo(vex::color ourColor);
+    void q4RedPathAlgo(vex::color ourColor);    //Sid
 
-    void q4PathAlgo(vex::color ourColor);
+    void q1BluePathAlgo(vex::color ourColor);   //Sid
+    
+    void q4BluePathAlgo(vex::color ourColor);   //Granny
 
     /// @brief Centers the robot on the biggest yellow blob using the vision sensor.
     void centerOnDisk();
