@@ -20,7 +20,7 @@ public:
     /// @param currentCapacity Current number of disks in the stack
     /// @param maxCapacity Maximum number of disks in the stack
     DiskGroup(int id, double x, double y, char teamColor, double radius, int currentCapacity, int maxCapacity = 3): 
-        GameElement(id, x, y, 0, teamColor, 'D', true, 0, radius, 0, radius){
+        GameElement(id, x, y, 0, teamColor, 'D', false, 0, radius, 0, radius){
             this->currentCapacity = currentCapacity;
             this->maxCapacity = maxCapacity;
             this->radius = radius;

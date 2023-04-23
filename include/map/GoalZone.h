@@ -21,7 +21,7 @@ public:
     /// @param maxCapacity Maximum Goal Capacity
     /// @param teamColor Side of the field the goal lays on
     GoalZone(int id, double ULX, double ULY, double LRX, double LRY, int maxCapacity, char teamColor)
-    :GameElement(id, (ULX + LRX) / 2.0, (ULY + LRY) / 2.0, 0, teamColor, 'Z'){
+    :GameElement(id, (ULX + LRX) / 2.0, (ULY + LRY) / 2.0, 0, teamColor, 'Z', true){
         // Center of Goal Zone is the position of the game element
         this->ULCorner = dbpair(ULX, ULY);
         this->LRCorner = dbpair(LRX, LRY);
@@ -35,7 +35,7 @@ public:
     /// @param maxCapacity Maximum Goal Capacity
     /// @param teamColor Side of the field the goal lays on
     GoalZone(int id, dbpair upperLeft, dbpair lowerRight, int maxCapacity, char teamColor)
-    :GameElement(id, (upperLeft.first + lowerRight.first) / 2.0, (upperLeft.second + lowerRight.second) / 2.0, 0, teamColor, 'Z'){
+    :GameElement(id, (upperLeft.first + lowerRight.first) / 2.0, (upperLeft.second + lowerRight.second) / 2.0, 0, teamColor, 'Z', true){
         this->ULCorner = upperLeft;
         this->LRCorner = lowerRight;
         this->maxCapacity = maxCapacity;

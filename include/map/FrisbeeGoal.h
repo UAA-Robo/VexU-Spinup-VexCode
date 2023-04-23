@@ -28,12 +28,13 @@ public:
         double radius = 0, 
         double height = 2, 
         int maxCapacity = 12
-        ): GameElement(id, x, y, 0, teamColor, 'F', false, 0, radius, 0, radius){
+        ): GameElement(id, x, y, 0, teamColor, 'F', true, 0, radius, 0, radius){
             
             this->maxCapacity = maxCapacity;
             this->height = height;
             this->radius = radius;
             this->currentCapacity = 0;
+            this->setIsBackAligned(true);
     }
 
     // Adds a disk to the goal
