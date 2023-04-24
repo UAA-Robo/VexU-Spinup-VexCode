@@ -58,7 +58,7 @@ void AutoDrive::rotateToHeading(double heading) {
         rotateToRelativeAngle(angleToRotate);
     }
     tm->setCurrHeading(heading);
-    tm->headingErrorCorrection();
+    //tm->headingErrorCorrection();
 }
 
 void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool ISBACKROTATION)
@@ -175,7 +175,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     tm->setCurrPosition(initPosition); 
     tm->setCurrHeading(180);
     tm->positionErrorCorrection(); //Correct error after leaving roller
-    tm->headingErrorCorrection();    
+    //tm->headingErrorCorrection();    
 
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
@@ -231,7 +231,7 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
-    std::pair<double,double> initPosition = {15, -59};
+    std::pair<double,double> initPosition = {16.5, -56};
 
     shootAtDesiredVelocity(40, 2);
 
@@ -240,13 +240,13 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     tm->setCurrPosition(initPosition); 
     tm->setCurrHeading(0);
     tm->positionErrorCorrection();
-    tm->headingErrorCorrection();
+    //tm->headingErrorCorrection();
 
     //Drive to x-axis in front of roller
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-5, initPosition.second});
 
     //Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-5, mp->mapElements.at(47)->GetPosition().second+7});
 
     rollRoller(ourColor);
 }
@@ -264,14 +264,14 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
     tm->positionErrorCorrection();
-    tm->headingErrorCorrection();
+    //tm->headingErrorCorrection();
     
     shootAtDesiredVelocity(40, 2);
 
     spinFlywheel(0);
 
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, initPosition.second});
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, mp->mapElements.at(47)->GetPosition().second-2});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, mp->mapElements.at(47)->GetPosition().second});
 
     rollRoller(rc->teamColor);
 
