@@ -10,6 +10,10 @@ Robot::Robot()
     autoDrive = new AutoDrive(hw, rc, tm);
 }
 
+void Robot::printFlywheelSpeed()
+{
+    hw->brain.Screen.print("%d", userDrive->getFlywheelSpeed());
+}
 
 void Robot::drive() {
     this->userDrive->drive();
