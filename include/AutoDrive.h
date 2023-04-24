@@ -58,47 +58,23 @@ private:
     /// @param numDisksToShoot  Integer number of disks in the hopper to shoot (1-3).
     void rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot);
 
-    /// @brief Rolls rollers on the side of the field until our color is dominant.
-    /// @param ourColor vex::color of our team.
     void rollRoller(vex::color ourColor);
 
-
-    /// @brief Pseudo decision-layer managing calls to pathing algorithms.
-    ///        Limited to competition use, see 'skillsPathing' for skills tournament use.
-    ///         @param IS_SKILLS boolean for guarding that manages whether to run algorithm in competition or skills mode.
-    void usePathing(bool IS_SKILLS = false); 
-
-    /// @brief  Pseudo decision-layer managing calls to pathing algorithms.
-    ///         Limited to skills tournament use, calls algorithms with boolean isSkills set to True.
-    ///         See 'usePathing' for competition pathing function.
-    void skillsPathing();
+    void usePathing(); 
 
     
-    /// @brief Pathing for red side of diagonal line in quadrant 2.
-    /// @param ourColor vex::color of our team.
-    /// @param isSkills boolean for guarding if statement that manages whether to run algorithm in competition or skills mode.
+
     void q2RedPathAlgo(vex::color ourColor, bool isSkills); //Granny
 
-    /// @brief Pathing for blue side of diagonal line in quadrant 3.
-    /// @param ourColor vex::color of our team.
-    /// @param isSkills boolean for guarding if statement that manages whether to run algorithm in competition or skills mode.
     void q3BluePathAlgo(vex::color ourColor, bool isSkills);
 
-    /// @brief Pathing for red side of diagonal line in quadrant 4.
-    /// @param ourColor vex::color of our team.
-    /// @param isSkills boolean for guarding if statement that manages whether to run algorithm in competition or skills mode.
     void q4RedPathAlgo(vex::color ourColor, bool isSkills);    //Sid
 
-    /// @brief Pathing for blue side of diagonal line in quadrant 2.
-    /// @param ourColor vex::color of our team.
-    /// @param isSkills boolean for guarding if statement that manages whether to run algorithm in competition or skills mode.
     void q2BluePathAlgo(vex::color ourColor, bool isSkills);   //Sid
-
-    /// @brief Pathing algorithm for blue side of diagonal line in quadrant 4.
-    /// @param ourColor vex::color of our team.
-    /// @param isSkills boolean for guarding if statement that manages whether to run algorithm in competition or skills mode.
+    
     void q4BluePathAlgo(vex::color ourColor, bool isSkills);   //Granny
 
+    void skillsPathing(vex::color ourColor, bool isSkills);
 
     /// @brief Centers the robot on the biggest yellow blob using the vision sensor.
     void centerOnDisk();

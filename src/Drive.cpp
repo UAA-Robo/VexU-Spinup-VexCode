@@ -4,6 +4,7 @@ Drive::Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry)
     rc = robotConfig;
     tm = telemetry;
     mp = new Map();
+    tm->setCurrPosition({0,0});
 }
 
 std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> velPercent) //{verticalVelPercent, horizontalVelPercent}

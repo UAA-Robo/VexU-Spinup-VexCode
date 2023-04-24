@@ -4,8 +4,7 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
     
 }
 void AutoDrive::drive() {
-    usePathing(false);
-    //q2RedPathAlgo(vex::red, true);
+    usePathing();
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -79,9 +78,8 @@ void AutoDrive::rotateToHeading(double heading) {
 
 void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool ISBACKROTATION)
 {
-    std::pair<double,double> currPos = tm->getManualPosition();
-    if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
-    double heading = tm->getHeadingBtwnPoints(currPos, finalPosition);
+    if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
+    double heading = tm->getHeadingBtwnPoints(tm->getCurrPosition(), finalPosition);
 
     if(ISBACKROTATION) heading -= 180;
     rotateToHeading(heading);
@@ -89,31 +87,25 @@ void AutoDrive::rotateToPosition(std::pair<double,double> finalPosition, bool IS
 }
 
 void AutoDrive::rotateToPosition(GameElement* gameElement) {
+    if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
+    double heading = tm->getHeadingBtwnPoints(tm->getCurrPosition(), gameElement->GetPositionWithMinOffset());
 
-    rotateToPosition(gameElement->GetPosition(), gameElement->GetAlignment());
-
-    // std::pair<double,double> currPos = tm->getManualPosition();
-    // if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
-    // double heading = tm->getHeadingBtwnPoints(currPos, gameElement->GetPositionWithMinOffset());
-
-    // if(gameElement->GetAlignment()) heading -= 180;
-    // rotateToHeading(heading);
+    if(gameElement->GetAlignment()) heading -= 180;
+    rotateToHeading(heading);
 }
 
 void AutoDrive::rotateAndDriveToPosition(GameElement* element) {
-
-    
-    std::pair<double,double> currPos = tm->getManualPosition();
-    if (IS_USING_GPS_POSITION) currPos = tm->getGPSPosition();
+    if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
 
     std::pair<double, double> position = element->GetPositionWithMinOffset();
 
     rotateToPosition(element); 
-    double distanceToPosition = tm->getDistanceBtwnPoints(currPos, position); //inches
+    double distanceToPosition = tm->getDistanceBtwnPoints(tm->getCurrPosition(), position); //inches
     if (element->GetAlignment()) distanceToPosition = -distanceToPosition;    
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition);
 
-    tm->setManualPosition(position);
+    tm->setCurrPosition(position);
+    tm->positionErrorCorrection();
 }
 
 void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool ISBACKTOPOSITION) {
@@ -121,14 +113,14 @@ void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool
 
     rotateToPosition(position, ISBACKTOPOSITION); 
 
-    std::pair<double,double> currPos = tm->getManualPosition();
-    if (IS_USING_GPS_HEADING) currPos = tm->getGPSPosition();
+    if (IS_USING_GPS_HEADING) tm->setCurrPosition(tm->getGPSPosition());
 
-    double distanceToPosition = tm->getDistanceBtwnPoints(currPos, position); //inches
+    double distanceToPosition = tm->getDistanceBtwnPoints(tm->getCurrPosition(), position); //inches
     if (ISBACKTOPOSITION) distanceToPosition = -distanceToPosition;
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition); //Drive at autoDriveVelPercent% velocity
 
-    tm->setManualPosition(position);
+    tm->setCurrPosition(position);
+    tm->positionErrorCorrection();
 }
 
 void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot) {
@@ -137,7 +129,7 @@ void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int nu
     shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
 }
 
-void AutoDrive::usePathing(bool IS_SKILLS){
+void AutoDrive::usePathing(){
     rc->setTeamColor(tm->getGPSPosition());
 
    // hw->controller.Screen.print("path algo reached");
@@ -148,14 +140,14 @@ void AutoDrive::usePathing(bool IS_SKILLS){
             break;
 
             case 2:
-            q2RedPathAlgo(rc->teamColor, IS_SKILLS);
+            q2RedPathAlgo(rc->teamColor, false);
             break;
 
             case 3:
             break;
 
             case 4:
-            q4RedPathAlgo(rc->teamColor, IS_SKILLS);
+            q4RedPathAlgo(rc->teamColor, false);
             break;
         }
    }else{
@@ -165,124 +157,75 @@ void AutoDrive::usePathing(bool IS_SKILLS){
             break;
 
             case 2:
-            q2BluePathAlgo(rc->teamColor, IS_SKILLS);
+            q2BluePathAlgo(rc->teamColor, false);
             break;
 
             case 3:  
             break;
 
             case 4:
-            q4BluePathAlgo(rc->teamColor, IS_SKILLS);
+            q4BluePathAlgo(rc->teamColor, false);
             break;
         }
    }
+
+    // if (rc->quadrant == 2 && rc->teamColor == vex::color::red) q2RedPathAlgo(rc->teamColor);
+    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::red) q4RedPathAlgo(rc->teamColor);
+    // else if (rc->quadrant == 1 && rc->teamColor == vex::color::blue) q1BluePathAlgo(rc->teamColor);
+    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::blue) q4BluePathAlgo(rc->teamColor);
 }
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
-    double flywheelVelPercent = 66;
+    double flywheelVelPercent = 65;
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
     IS_USING_INERTIA_HEADING = false;
     IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
+
 
     std::pair<double,double> initPosition = {-61.5, 38};
 
-    tm->setManualPosition(initPosition); 
+    tm->setCurrPosition(initPosition); 
     tm->setManualHeading(180);
     
+
     //Set bot at rollers and spin intake reveerse to get them
-    rollRoller(ourColor); //red
-
-    //Drive backward and shoot 2 disks
-    rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
-
-    if(isSkills){
-        rotateAndDriveToPosition(mp->mapElements.at(44));
-        rollRoller(rc->teamColor);
-    }
-    
-    //Spin intake to pick up disks
-    spinIntake(); 
-
-    //Pick up 3 disks and move a bit past last one, and shoot them
-    rotateAndDriveToPosition(mp->mapElements.at(25));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 5); //Move 5 extra inches past disk
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent - 5, 3);
-    
-
-    //Pick up 3 disks and move a bit past last one, and shoot them
-    /*
-    rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
-    */
-    rotateAndDriveToPosition(mp->mapElements.at(24));
-    rotateAndDriveToPosition(mp->mapElements.at(23));
-    rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
-    
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
-
-    if(!isSkills) return;
-    
-
-}
-
-void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills){
-    double flywheelVelPercent = 66;
-    IS_USING_GPS_HEADING = false;
-    IS_USING_GPS_POSITION = false;
-    IS_USING_INERTIA_HEADING = false;
-    IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
-    IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
-
-    std::pair<double,double> initPosition = {61.5, -38};
-
-    tm->setManualPosition(initPosition); 
-    tm->setManualHeading(0);
-    
-    //Set bot at rollers and spin intake reveerse to get them
-    rollRoller(ourColor); //blue
+    rollRoller(vex::color::red);
 
     //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first - 5, initPosition.second}, true);
-    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent, 2);
+    rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
+
+
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
     
     //Spin intake to pick up disks
     spinIntake(); 
 
-    //Pick up 3 disks and move a bit past last one, and shoot them
-    rotateAndDriveToPosition(mp->mapElements.at(32));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 5); //Move 5 extra inches past disk
-    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent - 5, 3);
-    
+    //Pick up 3 disks and move a bit past last one
+    rotateAndDriveToPosition(mp->mapElements.at(25));
+    hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("%d", mp->mapElements.at(25)->GetAlignment());
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
 
-    //Pick up 3 disks and move a bit past last one, and shoot them
-    /*
+    //Shoot 3 disks
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+
+    //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
+
+    //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
-    */
-    rotateAndDriveToPosition(mp->mapElements.at(33));
-    rotateAndDriveToPosition(mp->mapElements.at(34));
-    rotateAndDriveToPosition(mp->mapElements.at(35));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
     
-    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent, 3);
+    
+}
 
-    /*
-    PLACE NORMAL COMPETITION PATHING BEFORE IF STATEMENT HERE
-    */
+void AutoDrive::q3BluePathAlgo(vex::color ourColor, bool isSkills){
 
-    if(!isSkills) return;
-
-    /*
-    CONTINUE EXTENDED SKILLS PATHING HERE
-    */
 }
 
 void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Sid
@@ -299,7 +242,7 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
 
     spinFlywheel(0);
 
-    tm->setManualPosition(initPosition); 
+    tm->setCurrPosition(initPosition); 
     tm->setManualHeading(0);
 
     //Drive to x-axis in front of roller
@@ -309,8 +252,6 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
 
     rollRoller(ourColor);
-
-    if(!isSkills) return;
 }
 
 void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Sid
@@ -323,7 +264,7 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     std::pair<double,double> initPosition = {-16, 56};
 
-    tm->setManualPosition(initPosition);
+    tm->setCurrPosition(initPosition);
     tm->setManualHeading(180);
     
     shootAtDesiredVelocity(40, 2);
@@ -335,8 +276,12 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     rollRoller(rc->teamColor);
 
-    if(!isSkills) return;
 
+}
+
+void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
+{
+    
 }
 
 void AutoDrive::rollRoller(vex::color ourColor)

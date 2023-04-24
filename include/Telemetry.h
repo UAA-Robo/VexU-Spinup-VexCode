@@ -88,6 +88,13 @@ public:
     /// @brief      Sets the current inertia sensor heading to the current GPS heading
     void setInertiaHeadingToGPS();
 
+    void setCurrPosition(std::pair<double,double> currPos);
+
+
+    void positionErrorCorrection();
+
+    std::pair<double,double> getCurrPosition();
+
 private:
     Hardware* hw;
     RobotConfig* rc;
@@ -96,6 +103,7 @@ private:
     double manualHeading; //based off encoder values + math in auto drive
     double gpsTotalDistance; 
     double drivetrainEncoderTotalDistance;
+    std::pair<double,double> currentPosition;
 
     /// @brief              For a snapshot of data (size SNAPSHOTSIZE), disccards the outliers using boxplot statistics and takes the average of the data.
     /// @param snapshot     Vector of doubles or pairs of doubles of size SNAPSHOTSIZE that contains the data points to be normalized and averaged.
