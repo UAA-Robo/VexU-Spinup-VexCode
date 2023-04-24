@@ -4,7 +4,8 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
     
 }
 void AutoDrive::drive() {
-    usePathing();
+    //usePathing();
+    q2RedPathAlgo(vex::red, true);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -336,11 +337,6 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     if(!isSkills) return;
 
-}
-
-void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
-{
-    
 }
 
 void AutoDrive::rollRoller(vex::color ourColor)
