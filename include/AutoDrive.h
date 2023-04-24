@@ -66,8 +66,6 @@ private:
 
     void q2RedPathAlgo(vex::color ourColor, bool isSkills); //Granny
 
-    void q3BluePathAlgo(vex::color ourColor, bool isSkills);
-
     void q4RedPathAlgo(vex::color ourColor, bool isSkills);    //Sid
 
     void q2BluePathAlgo(vex::color ourColor, bool isSkills);   //Sid
