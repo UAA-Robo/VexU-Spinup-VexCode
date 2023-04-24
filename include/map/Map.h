@@ -90,12 +90,14 @@ class Map{
             // Rollers need to be offset by 4.9
             //Coordinate at the middle of the roller
             //addRoller(dbpair(70.2 - 29.43, 0.39 - 70.2),    dbpair(70.2 - 29.43 , 0.39 - 70.2),   'N'); //44 //Q3 roller
-            addRoller(dbpair(70.2 - 115.90, 140.02 - 70.2),    dbpair(70.2 - 106.06 , 137.62 - 70.2),   'N'); //44 //Q3 roller
             //addRoller(dbpair(70.2 - 0.39, 29.43 - 70.2),    dbpair(70.2 - 0.39, 29.43 - 70.2),    'N'); //45 //Q3
-            addRoller(dbpair(70.2 - 140.02,  115.90- 70.2),    dbpair(70.2 - 137.62, 106.06 - 70.2),    'N'); //45 //Q3
             //addRoller(dbpair(70.2 - 140.02, 110.98 - 70.2), dbpair(70.2 - 140.02, 110.98 - 70.2), 'N'); //46 //Q2
-            addRoller(dbpair(70.2 - 140.02, 110.98 - 70.2), dbpair(70.2 - 140.02, 110.98 - 70.2), 'N'); //46 //Q2
-            addRoller(dbpair(70.2 - 110.98, 140.02 - 70.2), dbpair(70.2 - 110.98, 140.02 - 70.2), 'N'); //47 //Q2
+            //addRoller(dbpair(70.2 - 110.98, 140.02 - 70.2), dbpair(70.2 - 110.98, 140.02 - 70.2), 'N'); //47 //Q2
+
+            addRoller(dbpair(70.2 - 115.90, 139.63 - 70.2),    dbpair(70.2 - 106.06 , 137.21 - 70.2),   'N'); //44 //Q3 roller
+            addRoller(dbpair(70.2 - 139.63,  115.90- 70.2),    dbpair(70.2 - 137.21, 106.06 - 70.2),    'N'); //45 //Q3
+            addRoller(dbpair(70.2 - 0.39, 34.35 - 70.2), dbpair(70.2 - 2.79, 24.51 - 70.2), 'N'); //46 //Q2
+            addRoller(dbpair(70.2 - 34.35, 2.79 - 70.2), dbpair(70.2 - 24.51, 0.39 - 70.2), 'N'); //47 //Q2
         }
 
         /*
