@@ -5,7 +5,8 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    usePathing();
+    //usePathing();
+    rollRoller(vex::color::red);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -13,13 +14,46 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
     for(int i = 0; i < numFlicks; ++i)
     {
-        spinFlywheel(desiredVoltage);
-        vex::wait(1500, vex::msec);
-        while(hw->flywheel.velocity(vex::percent) < velocityPercent);
+        while(hw->flywheel.velocity(vex::percent) < velocityPercent)
+        {
+            spinFlywheel(getPidFlywheelVoltage(desiredVoltage));;
+        }
 
         flickDisk();
-        vex::wait(500, vex::msec);
+        vex::wait(100,vex::msec);
     }
+}
+
+double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
+{
+    // PID constants
+    double Kp = 0.15;
+    double Ki = 0.000;
+    double Kd = 0.00;
+
+    // PID variables
+
+    double maxRPM = 600;
+    double targetRPM = targetVoltage / 12.0 * maxRPM;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+
+    // PID calculations
+    this->error = targetRPM - currentRPM;
+    this->integral += error;
+    this->derivative = error - prevError;
+    this->output = Kp * error + Ki * integral + Kd * derivative;
+    this->prevError = error;
+
+    // Limit output to valid motor voltage
+    if (output > 12.0)
+        output = 12.0;
+    if (output < -12.0)
+        output = -12.0;
+
+    return output;
+    // Set motor voltage
+    //flywheelTopMotor.spin(fwd, output, vex::voltageUnits::mV);
+    //flywheelBottomMotor.spin(fwd, output, vex::voltageUnits::mV);
 }
 
 void AutoDrive::rotateToRelativeAngle(double angle)  //Based on ENCODERS,
@@ -286,15 +320,33 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be G
 void AutoDrive::rollRoller(vex::color ourColor)
 {
     const double HUE_DEADBAND = 40;
-    const double intakeVolt = 9; //reaches 150 rpm to match the optical sensor rate
+    const double INTAKE_VOLT = 9; //reaches 150 rpm to match the optical sensor rate
     double oppositeHue;
+    double ourHue;
+    const double RED_HUE = 5;
+    const double BLUE_HUE = 220;
+    double initTime = hw->brain.timer(vex::timeUnits::sec);
+    const double MAX_TIME = 6; //seconds
 
-    if (ourColor == vex::color::red) oppositeHue = 220;   //red hue = 5
-    else if (ourColor == vex::color::blue) oppositeHue = 5; //blue hue = 220
-
+    
+    hw->controller.Screen.print(hw->opticalSensor.hue());
+    if (ourColor == vex::color::red) oppositeHue = BLUE_HUE;   
+    else oppositeHue = RED_HUE;
+    
     spinIntake(false, true, 9);
-    while(fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND); //Spin while seeing opposite color (outside deadband)
-    spinIntake(true, true);
+    
+    //If not red or blue, spin for 
+    // if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND && fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
+    //     vex::wait(2,vex::timeUnits::sec);
+    // }
+    //Else spin while seeing opposite color (outside deadband) and for 5 secs max
+
+
+    while((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND 
+    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) 
+    && (hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME); 
+
+    spinIntake(true, true); //stop intake
 }
 
 void AutoDrive::centerOnDisk(){
