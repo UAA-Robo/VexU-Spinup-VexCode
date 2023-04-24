@@ -78,5 +78,13 @@ private:
 
     /// @brief Centers the robot on the biggest yellow blob using the vision sensor.
     void centerOnDisk();
+    double getPidFlywheelVoltage(double targetVoltage);
+    private:
+
+    double error = 0;
+    double integral = 0;
+    double derivative = 0;
+    double prevError = 0;
+    double output = 0;
 
 };

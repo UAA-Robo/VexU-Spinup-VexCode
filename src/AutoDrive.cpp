@@ -5,7 +5,11 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    usePathing();
+    while(true)
+    {
+        shootAtDesiredVelocity(60,1);
+        vex::wait(200,vex::msec);
+    }
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -13,13 +17,47 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
     for(int i = 0; i < numFlicks; ++i)
     {
-        spinFlywheel(desiredVoltage);
         vex::wait(1500, vex::msec);
-        while(hw->flywheel.velocity(vex::percent) < velocityPercent);
+        while(hw->flywheel.velocity(vex::percent) < velocityPercent)
+        {
+            spinFlywheel(getPidFlywheelVoltage(desiredVoltage));;
+        }
 
         flickDisk();
         vex::wait(500, vex::msec);
     }
+}
+
+double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
+{
+    // PID constants
+    double Kp = 0.1;
+    double Ki = 0.001;
+    double Kd = 0.05;
+
+    // PID variables
+
+    double maxRPM = 600;
+    double targetRPM = targetVoltage / 12.0 * maxRPM;
+    double currentRPM;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+
+    // PID calculations
+    this->error = targetRPM - currentRPM;
+    this->integral += error;
+    this->derivative = error - prevError;
+    this->output = Kp * error + Ki * integral + Kd * derivative;
+    this->prevError = error;
+
+    // Limit output to valid motor voltage
+    if (output > 12.0)
+        output = 12.0;
+    if (output < -12.0)
+        output = -12.0;
+
+    return output;
+    // Set motor voltage
+    //flywheelTopMotor.spin(fwd, output, vex::voltageUnits::mV);
+    //flywheelBottomMotor.spin(fwd, output, vex::voltageUnits::mV);
 }
 
 void AutoDrive::rotateToRelativeAngle(double angle)  //Based on ENCODERS,
