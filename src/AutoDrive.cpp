@@ -4,8 +4,8 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
     
 }
 void AutoDrive::drive() {
-    //usePathing();
-    q2RedPathAlgo(vex::red, true);
+    usePathing(false);
+    //q2RedPathAlgo(vex::red, true);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -137,7 +137,7 @@ void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int nu
     shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
 }
 
-void AutoDrive::usePathing(){
+void AutoDrive::usePathing(bool IS_SKILLS){
     rc->setTeamColor(tm->getGPSPosition());
 
    // hw->controller.Screen.print("path algo reached");
@@ -148,14 +148,14 @@ void AutoDrive::usePathing(){
             break;
 
             case 2:
-            q2RedPathAlgo(rc->teamColor, false);
+            q2RedPathAlgo(rc->teamColor, IS_SKILLS);
             break;
 
             case 3:
             break;
 
             case 4:
-            q4RedPathAlgo(rc->teamColor, false);
+            q4RedPathAlgo(rc->teamColor, IS_SKILLS);
             break;
         }
    }else{
@@ -165,14 +165,14 @@ void AutoDrive::usePathing(){
             break;
 
             case 2:
-            q2BluePathAlgo(rc->teamColor, false);
+            q2BluePathAlgo(rc->teamColor, IS_SKILLS);
             break;
 
             case 3:  
             break;
 
             case 4:
-            q4BluePathAlgo(rc->teamColor, false);
+            q4BluePathAlgo(rc->teamColor, IS_SKILLS);
             break;
         }
    }

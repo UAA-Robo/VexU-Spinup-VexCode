@@ -65,7 +65,8 @@ private:
 
     /// @brief Pseudo decision-layer managing calls to pathing algorithms.
     ///        Limited to competition use, see 'skillsPathing' for skills tournament use.
-    void usePathing(); 
+    ///         @param IS_SKILLS boolean for guarding that manages whether to run algorithm in competition or skills mode.
+    void usePathing(bool IS_SKILLS = false); 
 
     /// @brief  Pseudo decision-layer managing calls to pathing algorithms.
     ///         Limited to skills tournament use, calls algorithms with boolean isSkills set to True.
