@@ -3,6 +3,7 @@
 AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry): Drive(hardware, robotConfig, telemetry) {
     
 }
+
 void AutoDrive::drive() {
     usePathing();
 }
@@ -189,6 +190,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
     tm->setCurrPosition(initPosition); 
     tm->setManualHeading(180);
+    tm->positionErrorCorrection();
     
 
     //Set bot at rollers and spin intake reveerse to get them
@@ -212,7 +214,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
 
     //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
 
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
@@ -286,7 +288,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be G
 
 void AutoDrive::rollRoller(vex::color ourColor)
 {
-    const double HUE_DEADBAND = 10;
+    const double HUE_DEADBAND = 40;
     const double intakeVolt = 9; //reaches 150 rpm to match the optical sensor rate
     double oppositeHue;
 

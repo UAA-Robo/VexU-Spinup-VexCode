@@ -1,6 +1,8 @@
 #include "Hardware.h"
 
 Hardware::Hardware() {
+    opticalSensor.setLight(vex::ledState::on);
+    opticalSensor.setLightPower(100);
     wheelLeftFront.setBrake(vex::brakeType::hold);
     wheelLeftBack.setBrake(vex::brakeType::hold);
     wheelRightFront.setBrake(vex::brakeType::hold);
@@ -22,4 +24,5 @@ Hardware::Hardware() {
     while(inertiaSensor.isCalibrating());
 
     opticalSensor.integrationTime(100);
+
 }
