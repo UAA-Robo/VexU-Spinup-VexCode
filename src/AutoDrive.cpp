@@ -180,15 +180,18 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
+    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2.75, mp->mapElements.at(44)->GetPosition().second - 8}; //ONLY FOR SKILLS
     //Drive backward and shoot 2 disks
-    rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
-    
-
-
-
+    if (isSkills) rotateAndDriveToPosition({secondRollerOffset.first, tm->getCurrPosition().second}, true);
+    else rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
-    
+    if (isSkills) {
+        rotateAndDriveToPosition({secondRollerOffset.first,secondRollerOffset.second}, true);
+        rollRoller(ourColor);
+        rotateAndDriveToPosition({tm->getCurrPosition().first, tm->getCurrPosition().first - 42}, true);
+
+    }
     //Spin intake to pick up disks
     spinIntake(); 
 
@@ -236,10 +239,10 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     tm->headingErrorCorrection();
 
     //Drive to x-axis in front of roller
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, initPosition.second});
 
     //Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
 
     rollRoller(ourColor);
 }
@@ -263,8 +266,8 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     spinFlywheel(0);
 
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first+5, initPosition.second});
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first+5, mp->mapElements.at(47)->GetPosition().second-2});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, mp->mapElements.at(47)->GetPosition().second-2});
 
     rollRoller(rc->teamColor);
 
