@@ -5,12 +5,8 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    
-    while(true)
-    {
-        shootAtDesiredVelocity(60.00,1000);
-        vex::wait(200,vex::msec);
-    }
+    //usePathing();
+    rollRoller(vex::color::red);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -218,19 +214,25 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
+    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2.75, mp->mapElements.at(44)->GetPosition().second - 8}; //ONLY FOR SKILLS
     //Drive backward and shoot 2 disks
-    rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
-    
+    if (isSkills){ 
+        rotateAndDriveToPosition({secondRollerOffset.first, tm->getCurrPosition().second}, true);
+    }else{ 
+        rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
+        rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+    }
 
-
-
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
-
-    
+    if (isSkills) {
+        rotateAndDriveToPosition({secondRollerOffset.first,secondRollerOffset.second}, true);
+        rollRoller(ourColor);
+        rotateAndDriveToPosition({tm->getCurrPosition().first, tm->getCurrPosition().first - 42}, true);
+    }
     //Spin intake to pick up disks
     spinIntake(); 
 
     //Pick up 3 disks and move a bit past last one
+    //SHOOTING DISK 25 SHOULD BE AT 62.5%
     rotateAndDriveToPosition(mp->mapElements.at(25));
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1,1);
@@ -240,6 +242,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
 
+    //SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
@@ -274,10 +277,10 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     tm->headingErrorCorrection();
 
     //Drive to x-axis in front of roller
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, initPosition.second});
 
     //Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
 
     rollRoller(ourColor);
 }
@@ -301,8 +304,8 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     spinFlywheel(0);
 
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first+5, initPosition.second});
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first+5, mp->mapElements.at(47)->GetPosition().second-2});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first+5, mp->mapElements.at(47)->GetPosition().second-2});
 
     rollRoller(rc->teamColor);
 
@@ -317,15 +320,33 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be G
 void AutoDrive::rollRoller(vex::color ourColor)
 {
     const double HUE_DEADBAND = 40;
-    const double intakeVolt = 9; //reaches 150 rpm to match the optical sensor rate
+    const double INTAKE_VOLT = 9; //reaches 150 rpm to match the optical sensor rate
     double oppositeHue;
+    double ourHue;
+    const double RED_HUE = 5;
+    const double BLUE_HUE = 220;
+    double initTime = hw->brain.timer(vex::timeUnits::sec);
+    const double MAX_TIME = 6; //seconds
 
-    if (ourColor == vex::color::red) oppositeHue = 220;   //red hue = 5
-    else if (ourColor == vex::color::blue) oppositeHue = 5; //blue hue = 220
-
+    
+    hw->controller.Screen.print(hw->opticalSensor.hue());
+    if (ourColor == vex::color::red) oppositeHue = BLUE_HUE;   
+    else oppositeHue = RED_HUE;
+    
     spinIntake(false, true, 9);
-    while(fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND); //Spin while seeing opposite color (outside deadband)
-    spinIntake(true, true);
+    
+    //If not red or blue, spin for 
+    // if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND && fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
+    //     vex::wait(2,vex::timeUnits::sec);
+    // }
+    //Else spin while seeing opposite color (outside deadband) and for 5 secs max
+
+
+    while((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND 
+    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) 
+    && (hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME); 
+
+    spinIntake(true, true); //stop intake
 }
 
 void AutoDrive::centerOnDisk(){

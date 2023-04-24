@@ -19,7 +19,7 @@ STANDARD UNITS:
 class Robot{
 public:
     Robot();
-    void printDistToGoal();
+    void printFlywheelSpeed();
     void drive();
     void driveAuto();
 private:

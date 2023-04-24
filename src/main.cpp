@@ -56,7 +56,6 @@ void autonomous(void) {
   }
 }
 
-
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -70,6 +69,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   icebot = new Robot();
+
   vex::wait(2000, vex::msec);
   while (isControlled) {
     icebot->drive();

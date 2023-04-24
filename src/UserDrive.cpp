@@ -3,6 +3,10 @@
 UserDrive::UserDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry): Drive(hardware, robotConfig, telemetry) 
 {}
 
+int UserDrive::getFlywheelSpeed()
+{
+    return flywheelVoltage;
+}
 
 void UserDrive::drive()
 {
@@ -12,6 +16,11 @@ void UserDrive::drive()
     flywheelControls();
     flickDiskControls();
     expandControls();
+    hw->controller.Screen.print("%.3f", flywheelVoltage);
+    vex::wait(100, vex::timeUnits::msec);
+    hw->controller.Screen.clearLine();
+    hw->controller.Screen.setCursor(1, 1);
+    vex::wait(100, vex::timeUnits::msec);
 }
 
 void UserDrive::driveTrainControls(){
@@ -50,13 +59,24 @@ void UserDrive::intakeControls(){
 }
 
 void UserDrive::flywheelControls(){
+
+    // if(hw->controller.ButtonDown.pressing()){
+    //     flywheelVoltage-=0.1;
+    // }
+
+    // if(hw->controller.ButtonUp.pressing()){
+    //     flywheelVoltage+=0.1;
+    // }
+
     if(hw->controller.ButtonB.pressing()){
-        flywheelVoltage = (flywheelVoltage >= 8000) ? 8000 : 12000;
+        flywheelVoltage = (flywheelVoltage >= 8) ? 8 : 12;
     }
+
+    //flywheelVoltage = 7.4;
     if(hw->controller.ButtonR1.pressing()){
        spinFlywheel(flywheelVoltage);
     }else if(hw->controller.ButtonY.pressing()){
-        spinFlywheel(-12000);
+        spinFlywheel(-12);
     }else{
         spinFlywheel(0);
     }

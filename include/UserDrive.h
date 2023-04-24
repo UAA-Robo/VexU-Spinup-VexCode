@@ -3,13 +3,14 @@
 class UserDrive : public Drive{
 public:
     UserDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry);
+    int getFlywheelSpeed();
     void drive();
 
 private:
     
     const int deadzone = 5;
 
-    int flywheelVoltage = 8000;
+    double flywheelVoltage = 8;
 
     int mirrorDrive = 1;
 

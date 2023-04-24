@@ -86,8 +86,8 @@ void Drive :: flickDisk() {
 
     hw->launcher.spin(vex::forward,7,vex::volt);
     wait(150,vex::msec);
-    hw->launcher.spin(vex::reverse,7,vex::volt);
-    wait(170,vex::msec);
+    hw->launcher.spin(vex::reverse,8,vex::volt);
+    wait(200,vex::msec);
     hw->launcher.stop();
 }
 
