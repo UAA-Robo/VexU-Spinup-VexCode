@@ -192,7 +192,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     tm->setManualHeading(180);
     
     //Set bot at rollers and spin intake reveerse to get them
-    rollRoller(vex::color::red);
+    rollRoller(ourColor); //red
 
     //Drive backward and shoot 2 disks
     rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
@@ -230,7 +230,48 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
 }
 
-void AutoDrive::q3BluePathAlgo(vex::color ourColor, bool isSkills){
+void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills){
+    double flywheelVelPercent = 66;
+    IS_USING_GPS_HEADING = false;
+    IS_USING_GPS_POSITION = false;
+    IS_USING_INERTIA_HEADING = false;
+    IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
+    IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
+
+    std::pair<double,double> initPosition = {61.5, -38};
+
+    tm->setManualPosition(initPosition); 
+    tm->setManualHeading(0);
+    
+    //Set bot at rollers and spin intake reveerse to get them
+    rollRoller(ourColor); //blue
+
+    //Drive backward and shoot 2 diskds
+    rotateAndDriveToPosition({initPosition.first - 5, initPosition.second}, true);
+    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent, 2);
+
+    
+    //Spin intake to pick up disks
+    spinIntake(); 
+
+    //Pick up 3 disks and move a bit past last one, and shoot them
+    rotateAndDriveToPosition(mp->mapElements.at(32));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 5); //Move 5 extra inches past disk
+    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent - 5, 3);
+    
+
+    //Pick up 3 disks and move a bit past last one, and shoot them
+    /*
+    rotateAndDriveToPosition(mp->mapElements.at(22));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    */
+    rotateAndDriveToPosition(mp->mapElements.at(33));
+    rotateAndDriveToPosition(mp->mapElements.at(34));
+    rotateAndDriveToPosition(mp->mapElements.at(35));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    
+    rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent, 3);
 
     /*
     PLACE NORMAL COMPETITION PATHING BEFORE IF STATEMENT HERE
@@ -295,20 +336,11 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     if(!isSkills) return;
 
-
 }
 
 void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
-    /*
-    PLACE NORMAL COMPETITION PATHING BEFORE IF STATEMENT HERE
-    */
-
-    if(!isSkills) return;
-
-    /*
-    CONTINUE EXTENDED SKILLS PATHING HERE
-    */
+    
 }
 
 void AutoDrive::rollRoller(vex::color ourColor)
