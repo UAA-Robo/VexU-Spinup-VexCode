@@ -5,9 +5,10 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
+    
     while(true)
     {
-        shootAtDesiredVelocity(60,1);
+        shootAtDesiredVelocity(60.00,1000);
         vex::wait(200,vex::msec);
     }
 }
@@ -17,29 +18,28 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
     for(int i = 0; i < numFlicks; ++i)
     {
-        vex::wait(1500, vex::msec);
         while(hw->flywheel.velocity(vex::percent) < velocityPercent)
         {
             spinFlywheel(getPidFlywheelVoltage(desiredVoltage));;
         }
 
         flickDisk();
-        vex::wait(500, vex::msec);
+        vex::wait(100,vex::msec);
     }
 }
 
 double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
 {
     // PID constants
-    double Kp = 0.1;
-    double Ki = 0.001;
-    double Kd = 0.05;
+    double Kp = 0.15;
+    double Ki = 0.000;
+    double Kd = 0.00;
 
     // PID variables
 
     double maxRPM = 600;
     double targetRPM = targetVoltage / 12.0 * maxRPM;
-    double currentRPM;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
 
     // PID calculations
     this->error = targetRPM - currentRPM;
