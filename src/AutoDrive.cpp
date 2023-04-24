@@ -212,15 +212,16 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
     tm->setCurrPosition(initPosition); 
     tm->setCurrHeading(180);
-    tm->positionErrorCorrection();
-    tm->headingErrorCorrection();
-    
+    tm->positionErrorCorrection(); //Correct error after leaving roller
+    tm->headingErrorCorrection();    
 
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
-    //Drive backward and shoot 2 diskds
-    rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
+    //Drive backward and shoot 2 disks
+    rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
+    
+
 
 
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
