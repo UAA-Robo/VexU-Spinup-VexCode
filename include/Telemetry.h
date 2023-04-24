@@ -88,11 +88,16 @@ public:
     /// @brief      Sets the current inertia sensor heading to the current GPS heading
     void setInertiaHeadingToGPS();
 
+    /// @brief      Sets the curent position of the robot
+    /// @param currPos 
     void setCurrPosition(std::pair<double,double> currPos);
 
-
+    /// @brief      Checks the current position and compares it with the gps position. If it is within a certain constraint the gps is used
+    //              Not 100% accureate at the moment
     void positionErrorCorrection();
 
+    /// @brief      Gets the current position of the robot
+    /// @return     Returns the currentPosition
     std::pair<double,double> getCurrPosition();
 
 private:
