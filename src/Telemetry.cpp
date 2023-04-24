@@ -225,11 +225,11 @@ void Telemetry::headingErrorCorrection(double errorBounds)
 
     if (x == numChecks)
     {
-        hw->controller.Screen.setCursor(2,1);
+        hw->controller.Screen.setCursor(3,1);
         hw->controller.Screen.print("Used Encoder Heading");
         return;
     }
-    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.setCursor(3,1);
     hw->controller.Screen.print("Used GPS Heading");
     this->currHeading = gpsEstimate;
 }
