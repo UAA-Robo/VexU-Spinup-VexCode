@@ -26,3 +26,8 @@ Hardware::Hardware() {
     opticalSensor.integrationTime(100);
 
 }
+
+void Hardware::startupCheck()
+{
+    //vex::devices::numberOf
+}

@@ -7,6 +7,8 @@ public:
     //Constructors
     Hardware();
 
+    void startupCheck();
+
     vex::brain brain;
     vex::controller controller = vex::controller(vex::primary);
 

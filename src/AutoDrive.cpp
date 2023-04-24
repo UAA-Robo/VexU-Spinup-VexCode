@@ -182,20 +182,23 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
     std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2.75, mp->mapElements.at(44)->GetPosition().second - 8}; //ONLY FOR SKILLS
     //Drive backward and shoot 2 disks
-    if (isSkills) rotateAndDriveToPosition({secondRollerOffset.first, tm->getCurrPosition().second}, true);
-    else rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+    if (isSkills){ 
+        rotateAndDriveToPosition({secondRollerOffset.first, tm->getCurrPosition().second}, true);
+    }else{ 
+        rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
+        rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+    }
 
     if (isSkills) {
         rotateAndDriveToPosition({secondRollerOffset.first,secondRollerOffset.second}, true);
         rollRoller(ourColor);
         rotateAndDriveToPosition({tm->getCurrPosition().first, tm->getCurrPosition().first - 42}, true);
-
     }
     //Spin intake to pick up disks
     spinIntake(); 
 
     //Pick up 3 disks and move a bit past last one
+    //SHOOTING DISK 25 SHOULD BE AT 62.5%
     rotateAndDriveToPosition(mp->mapElements.at(25));
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1,1);
@@ -205,6 +208,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
 
+    //SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
