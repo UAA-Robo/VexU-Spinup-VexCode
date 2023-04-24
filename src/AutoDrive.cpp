@@ -5,7 +5,8 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    usePathing();
+    //usePathing();
+    rollRoller(vex::color::red);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -282,15 +283,28 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be G
 void AutoDrive::rollRoller(vex::color ourColor)
 {
     const double HUE_DEADBAND = 40;
-    const double intakeVolt = 9; //reaches 150 rpm to match the optical sensor rate
+    const double INTAKE_VOLT = 9; //reaches 150 rpm to match the optical sensor rate
     double oppositeHue;
+    double ourHue;
+    const double RED_HUE = 5;
+    const double BLUE_HUE = 220;
+    double initTime = hw->brain.timer(vex::timeUnits::sec);
+    const double MAX_TIME = 6; //seconds
 
-    if (ourColor == vex::color::red) oppositeHue = 220;   //red hue = 5
-    else if (ourColor == vex::color::blue) oppositeHue = 5; //blue hue = 220
 
+    if (ourColor == vex::color::red) oppositeHue = BLUE_HUE;   
+    else oppositeHue = RED_HUE;
+    
     spinIntake(false, true, 9);
-    while(fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND); //Spin while seeing opposite color (outside deadband)
-    spinIntake(true, true);
+    
+    //If not red or blue, spin for 
+    if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND and fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
+        vex::wait(2,vex::timeUnits::sec);
+    }
+    //Else spin while seeing opposite color (outside deadband) and for 5 secs max
+    else while(fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND && (hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME); 
+
+    spinIntake(true, true); //stop intake
 }
 
 void AutoDrive::centerOnDisk(){
