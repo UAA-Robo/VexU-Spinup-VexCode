@@ -90,9 +90,9 @@ class Map{
             // Rollers need to be offset by 4.9
             //Coordinate at the middle of the roller
             addRoller(dbpair(70.2 - 29.43, 0.39 - 70.2),    dbpair(70.2 - 29.43 , 0.39 - 70.2),   'N'); //44 //Q3 roller
-            addRoller(dbpair(70.2 - 0.39, 29.43 - 70.2),    dbpair(70.2 - 0.39, 29.43 - 70.2),    'N'); //45
-            addRoller(dbpair(70.2 - 140.02, 110.98 - 70.2), dbpair(70.2 - 140.02, 110.98 - 70.2), 'N'); //46
-            addRoller(dbpair(70.2 - 110.98, 140.02 - 70.2), dbpair(70.2 - 110.98, 140.02 - 70.2), 'N'); //47
+            addRoller(dbpair(70.2 - 0.39, 29.43 - 70.2),    dbpair(70.2 - 0.39, 29.43 - 70.2),    'N'); //45 //Q3
+            addRoller(dbpair(70.2 - 140.02, 110.98 - 70.2), dbpair(70.2 - 140.02, 110.98 - 70.2), 'N'); //46 //Q2
+            addRoller(dbpair(70.2 - 110.98, 140.02 - 70.2), dbpair(70.2 - 110.98, 140.02 - 70.2), 'N'); //47 //Q2
         }
 
         /*

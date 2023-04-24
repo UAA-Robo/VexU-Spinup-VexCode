@@ -194,10 +194,14 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
-    //Drive backward and shoot 2 diskds
+    //Drive backward and shoot 2 disks
     rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
+    if(isSkills){
+        rotateAndDriveToPosition(mp->mapElements.at(44));
+        rollRoller(rc->teamColor);
+    }
     
     //Spin intake to pick up disks
     spinIntake(); 
@@ -223,6 +227,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
     if(!isSkills) return;
     
+
 }
 
 void AutoDrive::q3BluePathAlgo(vex::color ourColor, bool isSkills){
