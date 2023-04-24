@@ -64,15 +64,17 @@ private:
 
     
 
-    void q2RedPathAlgo(vex::color ourColor); //Granny
+    void q2RedPathAlgo(vex::color ourColor, bool isSkills); //Granny
 
-    void q3BluePathAlgo(vex::color ourColor); //Sid?
+    void q3BluePathAlgo(vex::color ourColor, bool isSkills);
 
-    void q4RedPathAlgo(vex::color ourColor);    //Sid
+    void q4RedPathAlgo(vex::color ourColor, bool isSkills);    //Sid
 
-    void q1BluePathAlgo(vex::color ourColor);   //Sid
+    void q2BluePathAlgo(vex::color ourColor, bool isSkills);   //Sid
     
-    void q4BluePathAlgo(vex::color ourColor);   //Granny
+    void q4BluePathAlgo(vex::color ourColor, bool isSkills);   //Granny
+
+    void skillsPathing(vex::color ourColor, bool isSkills);
 
     /// @brief Centers the robot on the biggest yellow blob using the vision sensor.
     void centerOnDisk();
