@@ -178,7 +178,7 @@ void AutoDrive::usePathing(){
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor) //Should be Granny
 {
-    double flywheelVelPercent = 65;
+    double flywheelVelPercent = 66;
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
     IS_USING_INERTIA_HEADING = false;
@@ -187,6 +187,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) //Should be Granny
 
 
     std::pair<double,double> initPosition = {-61.5, 38};
+
 
     tm->setManualPosition(initPosition); 
     tm->setManualHeading(180);
@@ -207,22 +208,21 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) //Should be Granny
 
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(25));
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1,1);
-    hw->controller.Screen.print("%d", mp->mapElements.at(25)->GetAlignment());
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
+   
+    //mp->mapElements.at(25)->setIsBackAligned(false);
+
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 5);
 
     //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
 
     //Shoot 3 disks
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
-    
-    
+
 }
 
 void AutoDrive::q3BluePathAlgo(vex::color ourColor){
