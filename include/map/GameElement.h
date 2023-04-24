@@ -30,7 +30,7 @@ private:
     double minXInteractableOffset;
     double maxYInteractableOffset;
     double minYInteractableOffset;
-    bool isBackAligned;
+    bool isBackAligned = false;
 
 protected:
     /// @brief Game Element Constructor. This class is designed to have child classes built off of it. Allowing for easy customization and handling of map elements.

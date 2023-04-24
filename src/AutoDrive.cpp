@@ -179,48 +179,46 @@ void AutoDrive::usePathing(){
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
-    double flywheelVelPercent = 65;
+    double flywheelVelPercent = 66;
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
     IS_USING_INERTIA_HEADING = false;
     IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
-
     std::pair<double,double> initPosition = {-61.5, 38};
 
     tm->setManualPosition(initPosition); 
     tm->setManualHeading(180);
     
-
     //Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
     //Drive backward and shoot 2 diskds
     rotateAndDriveToPosition({initPosition.first + 5, initPosition.second}, true);
-
-
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
 
     
     //Spin intake to pick up disks
     spinIntake(); 
 
-    //Pick up 3 disks and move a bit past last one
+    //Pick up 3 disks and move a bit past last one, and shoot them
     rotateAndDriveToPosition(mp->mapElements.at(25));
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1,1);
-    hw->controller.Screen.print("%d", mp->mapElements.at(25)->GetAlignment());
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 5); //Move 5 extra inches past disk
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent - 5, 3);
+    
 
-    //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
-
-    //Pick up 3 disks and move a bit past last one
+    //Pick up 3 disks and move a bit past last one, and shoot them
+    /*
     rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
-
-    //Shoot 3 disks
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    */
+    rotateAndDriveToPosition(mp->mapElements.at(24));
+    rotateAndDriveToPosition(mp->mapElements.at(23));
+    rotateAndDriveToPosition(mp->mapElements.at(22));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
 
     if(!isSkills) return;
