@@ -29,22 +29,6 @@ void Telemetry::printGPSInertiaData() {
     
 }
 
-void Telemetry::setManualPosition(std::pair<double,double> position) {
-    manualPosition = position;
-    currentPosition = position;
-}
-
-std::pair<double,double> Telemetry::getManualPosition() {
-    return manualPosition;
-}
-
-void Telemetry::setManualHeading(double heading) {
-    manualHeading = heading;
-}
-
-double Telemetry::getManualHeading() {
-    return manualHeading;
-}
 
 double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
 {
@@ -199,7 +183,7 @@ void Telemetry::positionErrorCorrection()
 {
     std::pair<double,double> gpsEstimate = getGPSPosition();
     int x = 0;
-    while(fabs((gpsEstimate.first - currentPosition.first) > 8.0 || fabs(gpsEstimate.second - currentPosition.second) > 8.0) && x < 3)
+    while((fabs(gpsEstimate.first - currentPosition.first) > 8.0 || fabs(gpsEstimate.second - currentPosition.second) > 8.0) && x < 3)
     {
         gpsEstimate = getGPSPosition();
         ++x;
@@ -219,6 +203,40 @@ void Telemetry::positionErrorCorrection()
 std::pair<double, double> Telemetry::getCurrPosition()
 {
     return this->currentPosition;
+}
+
+
+
+void Telemetry::setCurrHeading(double currHeading)
+{
+    this->currHeading = currHeading;
+}
+
+void Telemetry::headingErrorCorrection(double errorBounds)
+{
+    const int numChecks = 3;
+    double gpsEstimate = getGPSHeading();
+    int x = 0;
+    while(fabs(gpsEstimate - currHeading) > errorBounds && x < numChecks)
+    {
+        gpsEstimate = getGPSHeading();
+        ++x;
+    }
+
+    if (x == numChecks)
+    {
+        hw->controller.Screen.setCursor(2,1);
+        hw->controller.Screen.print("Used Encoder Heading");
+        return;
+    }
+    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.print("Used GPS Heading");
+    this->currHeading = gpsEstimate;
+}
+
+double Telemetry::getCurrHeading()
+{
+    return this->currHeading;
 }
 
 double Telemetry::snapShotAverage(std::vector<double> snapshot)

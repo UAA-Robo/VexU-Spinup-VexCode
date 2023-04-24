@@ -9,23 +9,6 @@ public:
 
     /// @brief  Test function used to print GPS position and heading and inertia to controller/
     void printGPSInertiaData();
-    
-    /// @brief  Manually sets the current robot position (assumess it calculated w/ odometry and encoders in autodrive)
-    /// @param position Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
-    void setManualPosition(std::pair<double,double> position);
-
-    /// @brief  Gets the current position that is updated manually using setManualPosition
-    /// @return Double of the position coordinatee {x, y} in inches wher {0,0} is the center of the feild.
-    std::pair<double,double> getManualPosition();
-
-    /// @brief  Manually sets the current robot heading (assumess it calculated w/ odometry and encoders in autodrive)
-    /// @param position Double of the heading (0-360) where positive is counterclockwise from the positive x axis.
-    void setManualHeading(double heading);
-
-    /// @brief  Gets the current heading that is updated manually using setManualHeading
-    /// @return Double of the heading (0-360) where positive is counterclockwise from the positive x axis.
-    double getManualHeading();
-
 
     /// @brief              Calculates the distance (in inches) between to points
     /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
@@ -92,18 +75,21 @@ public:
 
 
     void positionErrorCorrection();
-
     std::pair<double,double> getCurrPosition();
+
+    void setCurrHeading(double currPos);
+    void headingErrorCorrection(double errorBounds = 8);
+    double getCurrHeading();
 
 private:
     Hardware* hw;
     RobotConfig* rc;
 
-    std::pair<double, double> manualPosition; //based off encoder values + math in auto drive
-    double manualHeading; //based off encoder values + math in auto drive
     double gpsTotalDistance; 
     double drivetrainEncoderTotalDistance;
+
     std::pair<double,double> currentPosition;
+    double currHeading;
 
     /// @brief              For a snapshot of data (size SNAPSHOTSIZE), disccards the outliers using boxplot statistics and takes the average of the data.
     /// @param snapshot     Vector of doubles or pairs of doubles of size SNAPSHOTSIZE that contains the data points to be normalized and averaged.
