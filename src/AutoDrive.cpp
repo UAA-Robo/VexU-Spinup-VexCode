@@ -175,11 +175,6 @@ void AutoDrive::usePathing(){
             break;
         }
    }
-
-    // if (rc->quadrant == 2 && rc->teamColor == vex::color::red) q2RedPathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::red) q4RedPathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 1 && rc->teamColor == vex::color::blue) q1BluePathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::blue) q4BluePathAlgo(rc->teamColor);
 }
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
@@ -226,7 +221,8 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     
     rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
 
-
+    if(!isSkills) return;
+    
 }
 
 void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills){
@@ -272,6 +268,15 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills){
     
     rotateAndShoot(mp->mapElements.at(42), flywheelVelPercent, 3);
 
+    /*
+    PLACE NORMAL COMPETITION PATHING BEFORE IF STATEMENT HERE
+    */
+
+    if(!isSkills) return;
+
+    /*
+    CONTINUE EXTENDED SKILLS PATHING HERE
+    */
 }
 
 void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Sid
@@ -298,6 +303,8 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first-1, mp->mapElements.at(44)->GetPosition().second+2});
 
     rollRoller(ourColor);
+
+    if(!isSkills) return;
 }
 
 void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Sid
@@ -322,8 +329,14 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
     rollRoller(rc->teamColor);
 
+    if(!isSkills) return;
+
 }
 
+void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
+{
+    
+}
 
 void AutoDrive::rollRoller(vex::color ourColor)
 {
