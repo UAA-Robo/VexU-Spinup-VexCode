@@ -15,9 +15,10 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     spinFlywheel(desiredVoltage);
     for(int i = 0; i < numFlicks; ++i)
     {
+        vex::wait(1000,vex::msec);
         while(hw->flywheel.velocity(vex::percent) < velocityPercent);
         flickDisk();
-        vex::wait(2000,vex::msec);
+        vex::wait(1000,vex::msec);
     }
 }
 
@@ -61,6 +62,7 @@ void AutoDrive::rotateToRelativeAngle(double angle)  //Based on ENCODERS,
 
     hw->leftWheels.spinFor(revolutionsLeftWheels, vex::rotationUnits::rev, vel.first, vex::velocityUnits::pct, false);
     hw->rightWheels.spinFor(revolutionsRightWheels, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
+    while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct)); //Blocks other tasks from starting 
 }
 
 void AutoDrive::rotateToHeading(double heading) {
@@ -202,7 +204,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
 
     tm->setCurrPosition(initPosition); 
     tm->setCurrHeading(180);
-    tm->positionErrorCorrection(); //Correct error after leaving roller
+    tm->positionErrorCorrection();
     //tm->headingErrorCorrection();    
 
     //Set bot at rollers and spin intake reveerse to get them
@@ -229,7 +231,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //SHOOTING DISK 25 SHOULD BE AT 62.5%
     rotateAndDriveToPosition(mp->mapElements.at(25));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15);
-    rotateAndShoot(mp->mapElements.at(43), 64, 3);
+    rotateAndShoot(mp->mapElements.at(43), 66, 3);
 
     //SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     //Pick up 3 disks and move a bit past last one
@@ -237,8 +239,9 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 0);
 
     //Shoot 3 disks
-    std::pair<double, double> goalWithOffset = {mp->mapElements.at(43)->GetPosition().first - 4, mp->mapElements.at(43)->GetPosition().second};
-    rotateAndShoot(goalWithOffset, 60.83, 3);
+    //std::pair<double, double> goalWithOffset = {mp->mapElements.at(43)->GetPosition().first - 4, mp->mapElements.at(43)->GetPosition().second};
+    //rotateAndShoot(goalWithOffset, 60.83, 3);
+    rotateAndShoot(mp->mapElements.at(43), 62, 3);
     
     
 }
@@ -306,7 +309,48 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be S
 
 void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
-    
+    IS_USING_GPS_HEADING = false;
+    IS_USING_GPS_POSITION = false;
+    IS_USING_INERTIA_HEADING = false;
+    IS_USING_ENCODER_POSITION = true; //requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
+    IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
+
+    std::pair<double,double> initPosition = {61.5, -38};
+
+    tm->setCurrPosition(initPosition); 
+    tm->setCurrHeading(0);
+    //tm->positionErrorCorrection();
+
+    //Set bot at rollers and spin intake reveerse to get the
+    rollRoller(ourColor); //blu
+
+    //Drive backward and shoot 2 diskds
+    rotateAndDriveToPosition({initPosition.first - 5, initPosition.second}, true);
+    rotateAndShoot(mp->mapElements.at(42), 68, 2);
+
+
+    //Spin intake to pick up disks
+    spinIntake(); 
+
+    //Pick up 3 disks and move a bit past last one, and shoot them
+    rotateAndDriveToPosition(mp->mapElements.at(32));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15); //Move 5 extra inches past disk
+    rotateAndShoot(mp->mapElements.at(42), 62, 3);
+
+
+    //Pick up 3 disks and move a bit past last one, and shoot them
+    /*
+    rotateAndDriveToPosition(mp->mapElements.at(22));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    */
+    rotateAndDriveToPosition(mp->mapElements.at(33));
+    rotateAndDriveToPosition(mp->mapElements.at(34));
+    rotateAndDriveToPosition(mp->mapElements.at(35));
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+
+    rotateAndShoot(mp->mapElements.at(42), 65, 3);
+
 }
 
 void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
