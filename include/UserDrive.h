@@ -30,6 +30,13 @@ private:
     /// @brief  Lauches the expansion when the A buutton is pressed.
     void expandControls();
 
+    void flyweelControlswPID();
     /// @brief Toggles mirror drive variable
     void mirrorDriveToggle();
+
+    double error = 0;
+    double integral = 0;
+    double derivative = 0;
+    double prevError = 0;
+    double output = 0;
 };

@@ -13,10 +13,10 @@ void UserDrive::drive()
     mirrorDriveToggle();
     driveTrainControls();
     intakeControls();
-    flywheelControls();
+    flyweelControlswPID();
     flickDiskControls();
     expandControls();
-    hw->controller.Screen.print("%.3f", flywheelVoltage);
+    //hw->controller.Screen.print("%.3f", flywheelVoltage);
     vex::wait(100, vex::timeUnits::msec);
     hw->controller.Screen.clearLine();
     hw->controller.Screen.setCursor(1, 1);
@@ -56,6 +56,39 @@ void UserDrive::intakeControls(){
         spinIntake(false, true);
     }else{
         spinIntake(true, true);
+    }
+}
+void UserDrive::flyweelControlswPID()
+{
+    double Kp = 0.15;
+    double Ki = 0.000;
+    double Kd = 0.00;
+
+    // PID variables
+    if(hw->controller.ButtonY.pressing())
+    {
+    double maxRPM = 600;
+    double targetRPM = flywheelVoltage / 12.0 * maxRPM;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+
+    // PID calculations
+    this->error = targetRPM - currentRPM;
+    this->integral += error;
+    this->derivative = error - prevError;
+    this->output = Kp * error + Ki * integral + Kd * derivative;
+    this->prevError = error;
+
+    // Limit output to valid motor voltage
+    if (output > 12.0)
+        output = 12.0;
+    if (output < -12.0)
+        output = -12.0;
+
+    spinFlywheel(output);
+    }
+    else
+    {
+        spinFlywheel(0);
     }
 }
 
