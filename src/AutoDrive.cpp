@@ -5,22 +5,19 @@ AutoDrive::AutoDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* te
 }
 
 void AutoDrive::drive() {
-    //usePathing();
-    rollRoller(vex::color::red);
+    usePathing();
+    //rollRoller(vex::color::red);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {   
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
+    spinFlywheel(desiredVoltage);
     for(int i = 0; i < numFlicks; ++i)
     {
-        while(hw->flywheel.velocity(vex::percent) < velocityPercent)
-        {
-            spinFlywheel(getPidFlywheelVoltage(desiredVoltage));;
-        }
-
+        while(hw->flywheel.velocity(vex::percent) < velocityPercent);
         flickDisk();
-        vex::wait(100,vex::msec);
+        vex::wait(500,vex::msec);
     }
 }
 
@@ -273,13 +270,15 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Si
     tm->positionErrorCorrection();
     //tm->headingErrorCorrection();
 
+    double xRollerOffset = 2;
+
     //Drive to x-axis in front of roller
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-5, initPosition.second});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-xRollerOffset, initPosition.second});
 
     //Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-5, mp->mapElements.at(47)->GetPosition().second+7});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first-xRollerOffset, mp->mapElements.at(47)->GetPosition().second+6.5});
 
-    rollRoller(ourColor);
+    rollRoller(ourColor, false);
 }
 
 void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) //Should be Sid
@@ -314,7 +313,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) //Should be G
     
 }
 
-void AutoDrive::rollRoller(vex::color ourColor)
+void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
 {
     const double HUE_DEADBAND = 40;
     const double INTAKE_VOLT = 9; //reaches 150 rpm to match the optical sensor rate
@@ -330,7 +329,7 @@ void AutoDrive::rollRoller(vex::color ourColor)
     if (ourColor == vex::color::red) oppositeHue = BLUE_HUE;   
     else oppositeHue = RED_HUE;
     
-    spinIntake(false, true, 9);
+    spinIntake(false, false, 9);
     
     //If not red or blue, spin for 
     // if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND && fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
@@ -341,9 +340,9 @@ void AutoDrive::rollRoller(vex::color ourColor)
 
     while((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND 
     || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) 
-    && (hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME); 
+    && ( ((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT) ); 
 
-    spinIntake(true, true); //stop intake
+    spinIntake(true, false); //stop intake
 }
 
 void AutoDrive::centerOnDisk(){

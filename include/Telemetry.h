@@ -77,14 +77,14 @@ public:
 
     /// @brief      Checks the current position and compares it with the gps position. If it is within a certain constraint the gps is used
     //              Not 100% accureate at the moment
-    void positionErrorCorrection();
+    void positionErrorCorrection(double errorBounds = 5);
 
     /// @brief      Gets the current position of the robot
     /// @return     Returns the currentPosition
     std::pair<double,double> getCurrPosition();
 
     void setCurrHeading(double currPos);
-    void headingErrorCorrection(double errorBounds = 8);
+    void headingErrorCorrection(double errorBounds = 5);
     double getCurrHeading();
 
 private:

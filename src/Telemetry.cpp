@@ -179,11 +179,11 @@ void Telemetry::setCurrPosition(std::pair<double, double> currPos)
     this->currentPosition = currPos;
 }
 
-void Telemetry::positionErrorCorrection()
+void Telemetry::positionErrorCorrection(double errorBounds)
 {
     std::pair<double,double> gpsEstimate = getGPSPosition();
     int x = 0;
-    while((fabs(gpsEstimate.first - currentPosition.first) > 8.0 || fabs(gpsEstimate.second - currentPosition.second) > 8.0) && x < 3)
+    while((fabs(gpsEstimate.first - currentPosition.first) > errorBounds || fabs(gpsEstimate.second - currentPosition.second) > errorBounds) && x < 3)
     {
         gpsEstimate = getGPSPosition();
         ++x;
