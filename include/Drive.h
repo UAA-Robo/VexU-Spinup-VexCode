@@ -24,9 +24,9 @@ protected:
     Map* mp;
 
     double outPutVolt;
-    double Kp = 0.15;
-    double Ki = 0.000;
-    double Kd = 0.00;
+    double Kp = 0.9;
+    double Ki = 0.3;
+    double Kd = 0.6;
     
 
     /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on
