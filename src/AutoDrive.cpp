@@ -309,6 +309,41 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
     rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, mp->mapElements.at(47)->GetPosition().second + yRollerOffst});
 
     rollRoller(ourColor, false);
+
+    if (isSkills) {
+        xRollerOffset = 6;
+        yRollerOffst = 2;
+        std::pair<double, double> secondRollerOffset = {mp->mapElements.at(46)->GetPosition().first - xRollerOffset, mp->mapElements.at(46)->GetPosition().second - yRollerOffst}; // ONLY FOR SKILLS
+        rotateAndDriveToPosition({tm->getCurrPosition().first, secondRollerOffset.second}, true);
+        rotateAndDriveToPosition(secondRollerOffset);
+        rollRoller(vex::color::red);
+
+        rotateAndDriveToPosition({tm->getCurrPosition().first - 5, tm->getCurrPosition().second}, true);
+        
+        // Spin intake to pick up disks
+        spinIntake();
+
+        // Pick up 3 disks and move a bit past last one, and shoot them
+        rotateAndDriveToPosition(mp->mapElements.at(32));
+        moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15); // Move 5 extra inches past disk
+        rotateAndShoot(mp->mapElements.at(43), 40, 3);
+
+        // Pick up 3 disks and move a bit past last one, and shoot them
+        rotateAndDriveToPosition(mp->mapElements.at(33));
+        rotateAndDriveToPosition(mp->mapElements.at(34));
+        rotateAndDriveToPosition(mp->mapElements.at(35));
+        moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
+
+        rotateAndShoot(mp->mapElements.at(43), 40, 3);
+
+        //expand
+        rotateAndDriveToPosition({-58,58}, true);
+        rotateToPosition({-10, -70});
+        for (int i = 0; i < 3; i++) expand();
+
+        
+
+    }
 }
 
 void AutoDrive::q2BluePathAlgo(vex::color ourColor) // Should be Sid
