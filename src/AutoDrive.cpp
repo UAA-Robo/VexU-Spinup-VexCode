@@ -62,8 +62,7 @@ void AutoDrive::rotateToRelativeAngle(double angle) // Based on ENCODERS,
 
     hw->leftWheels.spinFor(revolutionsLeftWheels, vex::rotationUnits::rev, vel.first, vex::velocityUnits::pct, false);
     hw->rightWheels.spinFor(revolutionsRightWheels, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
-    while (hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct))
-        ; // Blocks other tasks from starting
+    while (fabs(hw->leftWheels.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->rightWheels.velocity(vex::velocityUnits::pct)) > 0); // Blocks other tasks from starting
 }
 
 void AutoDrive::rotateToHeading(double heading)
