@@ -17,11 +17,16 @@ void UserDrive::drive()
     flywheelControls();
     flickDiskControls();
     expandControls();
-    //hw->controller.Screen.print("%.3f", flywheelVoltage);
+    hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("T: %.2f B: %.2f", hw->flywheelTop.velocity(vex::rpm), hw->flywheelBottom.velocity(vex::rpm));
     vex::wait(100, vex::timeUnits::msec);
-    hw->controller.Screen.clearLine();
-    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.setCursor(2, 1);
+    hw->controller.Screen.print("kp: %.3f Out: %.2f", Kp ,outPutVolt);
     vex::wait(100, vex::timeUnits::msec);
+    //hw->controller.Screen.clearScreen();
+    ///hw->controller.Screen.setCursor(1, 1);
+    //vex::wait(100, vex::timeUnits::msec);
 }
 
 void UserDrive::driveTrainControls(){
@@ -59,19 +64,25 @@ void UserDrive::intakeControls(){
         spinIntake(true, true);
     }
 }
+
+
 void UserDrive::flyweelControlswPID()
 {
 
     if(hw->controller.ButtonLeft.pressing()){
-        Kp+=0.1;
+        Kp+=0.01;
     }
 
     if(hw->controller.ButtonRight.pressing()){
-        Kp-=0.1;
+        Kp-=0.01;
     }
 
     if(hw->controller.ButtonUp.pressing()){
+        Kp+=0.001;
+    }
 
+    if(hw->controller.ButtonDown.pressing()){
+        Kp-=0.001;
     }
 
     
@@ -88,14 +99,18 @@ void UserDrive::flyweelControlswPID()
         this->derivative = error - prevError;
         this->output = Kp * error + Ki * integral + Kd * derivative;
         this->prevError = error;
+        this->outPutVolt = output / maxRPM * 12;
 
         // Limit output to valid motor voltage
-        if (output > 12.0)
-            output = 12.0;
-        if (output < -12.0)
-            output = -12.0;
+        if (outPutVolt > 12.0)
+            outPutVolt = 12.0;
+        if (outPutVolt < -12.0)
+            outPutVolt = -12.0;
 
-        spinFlywheel(output);
+        spinFlywheel(outPutVolt);
+
+        //hw->controller.Screen.print("Kp:%.2f Output: %d", Kp, output);
+        //vex::wait(100, vex::timeUnits::msec);
     }
     else
     {
