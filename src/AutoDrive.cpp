@@ -24,22 +24,18 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 
 double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
 {
-    // PID constants
-    double Kp = 0.15;
-    double Ki = 0.000;
-    double Kd = 0.00;
-
-    // PID variables
     double maxRPM = 600;
     double targetRPM = targetVoltage / 12.0 * maxRPM;
-    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
 
     // PID calculations
     this->error = targetRPM - currentRPM;
-    this->integral += error * rc->PID_INTERVAL;
-    this->derivative = (error - prevError) / rc->PID_INTERVAL;
+    this->error = this->error / maxRPM * 12;
+    this->integral += error;
+    this->derivative = error - prevError;
     this->output = Kp * error + Ki * integral + Kd * derivative;
     this->prevError = error;
+    //this->outPutVolt = output / maxRPM * 12;
 
     // Limit output to valid motor voltage
     if (output > 12.0)
@@ -47,7 +43,6 @@ double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
     if (output < -12.0)
         output = -12.0;
 
-    hw->controller.Screen.print("RPM:%d Out:%.2f", hw->flywheelTop.velocity(vex::rpm), output);
     return output;
 }
 

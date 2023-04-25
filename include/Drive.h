@@ -14,6 +14,8 @@ public:
     /// @brief Outputs distance from robot to goal to computer screen
     double outputDistanceToGoal();
 
+    void flyweelControlswPID();
+
 
 protected:
     Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry);
