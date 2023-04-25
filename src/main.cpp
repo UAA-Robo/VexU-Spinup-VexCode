@@ -50,9 +50,9 @@ void pre_auton(void) {
 
 void autonomous(void) {
   icebot = new Robot();
- // if(!isControlled){
+ if(!isControlled){
     icebot->driveAuto();
-  //}
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ void autonomous(void) {
 
 void usercontrol(void) {
   icebot = new Robot();
-  while (true) {
+  while (isControlled) {
     icebot->drive();
     vex::wait(20, vex::msec); // Sleep the task for a short amount of time to prevent wasted resources.
   }
@@ -79,7 +79,7 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-  isControlled = true;
+  isControlled = false;
   
   // Set up callbacks for autonomous and driver control periods.
 

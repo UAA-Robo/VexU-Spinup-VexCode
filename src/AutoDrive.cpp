@@ -7,6 +7,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 void AutoDrive::drive()
 {   
     //shootAtDesiredVelocity(75, 10);
+    isSkills = true;
     usePathing();
 }
 
@@ -225,13 +226,13 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
-
-    // tm->headingErrorCorrection();
+    //tm->positionErrorCorrection();
+    //tm->headingErrorCorrection();
 
     // Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
-    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 3.25, mp->mapElements.at(44)->GetPosition().second - 9}; // ONLY FOR SKILLS
+    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2, mp->mapElements.at(44)->GetPosition().second - 9}; // ONLY FOR SKILLS
     // Drive backward and shoot 2 disks
     if (isSkills)
     {
@@ -267,9 +268,13 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 0);
 
     // Shoot 3 disks
-    // std::pair<double, double> goalWithOffset = {mp->mapElements.at(43)->GetPosition().first - 4, mp->mapElements.at(43)->GetPosition().second};
-    // rotateAndShoot(goalWithOffset, 60.83, 3);
     rotateAndShoot(mp->mapElements.at(43), 62, 3);
+
+    if (isSkills) { //expand
+        rotateAndDriveToPosition({58,-58}, true);
+        rotateToPosition({10, 70});
+        for (int i = 0; i < 3; i++) expand();
+    }
 }
 
 void AutoDrive::q3BluePathAlgo(vex::color ourColor)

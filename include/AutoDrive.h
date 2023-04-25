@@ -85,7 +85,7 @@ private:
     void centerOnDisk();
     double getPidFlywheelVoltage(double targetVoltage);
     private:
-    bool isSkills = true;
+    bool isSkills = false;
     double error = 0;
     double integral = 0;
     double derivative = 0;
