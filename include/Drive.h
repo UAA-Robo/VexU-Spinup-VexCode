@@ -23,6 +23,7 @@ protected:
     Telemetry* tm;
     Map* mp;
 
+    double outPutVolt;
     double Kp = 0.15;
     double Ki = 0.000;
     double Kd = 0.00;
