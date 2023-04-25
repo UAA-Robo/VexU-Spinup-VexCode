@@ -22,6 +22,10 @@ protected:
     RobotConfig* rc;
     Telemetry* tm;
     Map* mp;
+
+    double Kp = 0.15;
+    double Ki = 0.000;
+    double Kd = 0.00;
     
 
     /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on

@@ -15,6 +15,7 @@ public:
     const double DRIVETRAINWIDTH = 11;//distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels) 
     vex::color teamColor;
     int quadrant;
+    double PID_INTERVAL = 1;
     private:
     Hardware* hw;
 
