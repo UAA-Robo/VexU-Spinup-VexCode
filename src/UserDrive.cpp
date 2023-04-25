@@ -60,31 +60,41 @@ void UserDrive::intakeControls(){
 }
 void UserDrive::flyweelControlswPID()
 {
-    double Kp = 0.15;
-    double Ki = 0.000;
-    double Kd = 0.00;
 
+    if(hw->controller.ButtonLeft.pressing()){
+        Kp+=0.1;
+    }
+
+    if(hw->controller.ButtonRight.pressing()){
+        Kp-=0.1;
+    }
+
+    if(hw->controller.ButtonUp.pressing()){
+
+    }
+
+    
     // PID variables
-    if(hw->controller.ButtonY.pressing())
+    if(hw->controller.ButtonR1.pressing())
     {
-    double maxRPM = 600;
-    double targetRPM = flywheelVoltage / 12.0 * maxRPM;
-    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+        double maxRPM = 600;
+        double targetRPM = flywheelVoltage / 12.0 * maxRPM;
+        double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
 
-    // PID calculations
-    this->error = targetRPM - currentRPM;
-    this->integral += error;
-    this->derivative = error - prevError;
-    this->output = Kp * error + Ki * integral + Kd * derivative;
-    this->prevError = error;
+        // PID calculations
+        this->error = targetRPM - currentRPM;
+        this->integral += error;
+        this->derivative = error - prevError;
+        this->output = Kp * error + Ki * integral + Kd * derivative;
+        this->prevError = error;
 
-    // Limit output to valid motor voltage
-    if (output > 12.0)
-        output = 12.0;
-    if (output < -12.0)
-        output = -12.0;
+        // Limit output to valid motor voltage
+        if (output > 12.0)
+            output = 12.0;
+        if (output < -12.0)
+            output = -12.0;
 
-    spinFlywheel(output);
+        spinFlywheel(output);
     }
     else
     {
