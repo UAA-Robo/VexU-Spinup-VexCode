@@ -329,9 +329,6 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor, bool isSkills) // Should be 
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
-
-    hw->controller.Screen.setCursor(1, 1);
-    hw->controller.Screen.print("I am here");
     // Set bot at rollers and spin intake reveerse to get the
     rollRoller(ourColor); // blue
 
