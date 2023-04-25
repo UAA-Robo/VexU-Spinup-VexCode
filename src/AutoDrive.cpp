@@ -13,7 +13,7 @@ void AutoDrive::drive()
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
-    spinFlywheel(desiredVoltage);
+    spinFlywheel(getPidFlywheelVoltage(desiredVoltage));
     for (int i = 0; i < numFlicks; ++i)
     {
         while (hw->flywheel.velocity(vex::percent) < velocityPercent);
