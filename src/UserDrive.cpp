@@ -12,21 +12,21 @@ void UserDrive::drive()
 {
     mirrorDriveToggle();
     driveTrainControls();
-    //intakeControls();
+    intakeControls();
     flyweelControlswPID();
     flickDiskControls();
     expandControls();
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1, 1);
-    hw->controller.Screen.print("T: %.2f B: %.2f", hw->flywheelTop.velocity(vex::rpm), hw->flywheelBottom.velocity(vex::rpm));
-    hw->controller.Screen.newLine();
-    vex::wait(150, vex::timeUnits::msec);
-    hw->controller.Screen.print("kp: %.2f Out: %.2f", Kp ,output);
-    hw->controller.Screen.newLine();
-    vex::wait(150, vex::timeUnits::msec);
-   // hw->controller.Screen.newLine();
-    hw->controller.Screen.print("Ki: %.4f Kd: %.4f", Ki, Kd);
-    vex::wait(150, vex::timeUnits::msec);
+//     hw->controller.Screen.clearScreen();
+//     hw->controller.Screen.setCursor(1, 1);
+//     hw->controller.Screen.print("T: %.2f B: %.2f", hw->flywheelTop.velocity(vex::rpm), hw->flywheelBottom.velocity(vex::rpm));
+//     hw->controller.Screen.newLine();
+//     vex::wait(150, vex::timeUnits::msec);
+//     hw->controller.Screen.print("kp: %.2f Out: %.2f", Kp ,output);
+//     hw->controller.Screen.newLine();
+//     vex::wait(150, vex::timeUnits::msec);
+//    // hw->controller.Screen.newLine();
+//     hw->controller.Screen.print("Ki: %.4f Kd: %.4f", Ki, Kd);
+//     vex::wait(150, vex::timeUnits::msec);
 
     //hw->controller.Screen.clearScreen();
     ///hw->controller.Screen.setCursor(1, 1);
