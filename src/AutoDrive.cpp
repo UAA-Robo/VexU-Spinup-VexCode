@@ -32,15 +32,14 @@ double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
     double Kd = 0.00;
 
     // PID variables
-
     double maxRPM = 600;
     double targetRPM = targetVoltage / 12.0 * maxRPM;
-    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;
 
     // PID calculations
     this->error = targetRPM - currentRPM;
-    this->integral += error;
-    this->derivative = error - prevError;
+    this->integral += error * rc->PID_INTERVAL;
+    this->derivative = (error - prevError) / rc->PID_INTERVAL;
     this->output = Kp * error + Ki * integral + Kd * derivative;
     this->prevError = error;
 
@@ -50,10 +49,8 @@ double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
     if (output < -12.0)
         output = -12.0;
 
+    hw->controller.Screen.print("RPM:%d Out:%.2f", hw->flywheelTop.velocity(vex::rpm), output);
     return output;
-    // Set motor voltage
-    //flywheelTopMotor.spin(fwd, output, vex::voltageUnits::mV);
-    //flywheelBottomMotor.spin(fwd, output, vex::voltageUnits::mV);
 }
 
 void AutoDrive::rotateToRelativeAngle(double angle)  //Based on ENCODERS,
