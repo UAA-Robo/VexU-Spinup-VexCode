@@ -13,7 +13,8 @@ void UserDrive::drive()
     mirrorDriveToggle();
     driveTrainControls();
     intakeControls();
-    flyweelControlswPID();
+    //flyweelControlswPID();
+    flywheelControls();
     flickDiskControls();
     expandControls();
     //hw->controller.Screen.print("%.3f", flywheelVoltage);

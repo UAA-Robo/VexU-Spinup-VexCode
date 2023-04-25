@@ -17,7 +17,7 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     {
         while(hw->flywheel.velocity(vex::percent) < velocityPercent);
         flickDisk();
-        vex::wait(500,vex::msec);
+        vex::wait(2000,vex::msec);
     }
 }
 
@@ -86,7 +86,7 @@ void AutoDrive::rotateToHeading(double heading) {
 
         //Determines whether to rotate left or right based on the  shortest distance
         if (360 - fabs(angleToRotate) < angleToRotate) angleToRotate = angleToRotate - 360;
-        rotateToRelativeAngle(angleToRotate);
+        rotateToRelativeAngle(angleToRotate + robotAngleOffset);
     }
     tm->setCurrHeading(heading);
     //tm->headingErrorCorrection();
@@ -111,7 +111,7 @@ void AutoDrive::rotateToPosition(GameElement* gameElement) {
 }
 
 void AutoDrive::rotateAndDriveToPosition(GameElement* element) {
-    if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
+    //if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
 
     std::pair<double, double> position = element->GetPositionWithMinOffset();
 
@@ -120,8 +120,6 @@ void AutoDrive::rotateAndDriveToPosition(GameElement* element) {
     if (element->GetAlignment()) distanceToPosition = -distanceToPosition;    
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition);
 
-    tm->setCurrPosition(position);
-    tm->positionErrorCorrection();
 }
 
 void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool ISBACKTOPOSITION) {
@@ -134,14 +132,15 @@ void AutoDrive::rotateAndDriveToPosition(std::pair<double,double> position, bool
     double distanceToPosition = tm->getDistanceBtwnPoints(tm->getCurrPosition(), position); //inches
     if (ISBACKTOPOSITION) distanceToPosition = -distanceToPosition;
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition); //Drive at autoDriveVelPercent% velocity
-
-    tm->setCurrPosition(position);
-    tm->positionErrorCorrection();
 }
 
-void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot) {
+void AutoDrive::rotateAndShoot(std::pair<double, double> goal, double velocityPercent, int numDisksToShoot) {
     
-    rotateToPosition(goal);   //Red Goal
+    rotateToPosition(goal, true);   
+    shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
+}
+void AutoDrive::rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot) {
+    rotateToPosition(goal); 
     shootAtDesiredVelocity(velocityPercent, numDisksToShoot);
 }
 
@@ -193,7 +192,7 @@ void AutoDrive::usePathing(){
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Granny
 {
-    double flywheelVelPercent = 65;
+    //double flywheelVelPercent = 65;
     IS_USING_GPS_HEADING = false;
     IS_USING_GPS_POSITION = false;
     IS_USING_INERTIA_HEADING = false;
@@ -201,6 +200,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     IS_USING_ENCODER_HEADING = true;   //requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
 
+    //robotAngleOffset = 0.5; //degrees
     std::pair<double,double> initPosition = {-61.5, 38};
 
     tm->setCurrPosition(initPosition); 
@@ -217,7 +217,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
         rotateAndDriveToPosition({secondRollerOffset.first, tm->getCurrPosition().second}, true);
     }else{ 
         rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
-        rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 2);
+        rotateAndShoot(mp->mapElements.at(43),66.5, 2);
     }
 
     if (isSkills) {
@@ -228,24 +228,20 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor, bool isSkills) //Should be Gr
     //Spin intake to pick up disks
     spinIntake(); 
 
-    //Pick up 3 disks and move a bit past last one
+    //Pick up 3 disks and move a bit past last one and shoot them
     //SHOOTING DISK 25 SHOULD BE AT 62.5%
     rotateAndDriveToPosition(mp->mapElements.at(25));
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1,1);
-    hw->controller.Screen.print("%d", mp->mapElements.at(25)->GetAlignment());
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
-
-    //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15);
+    rotateAndShoot(mp->mapElements.at(43), 64, 3);
 
     //SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     //Pick up 3 disks and move a bit past last one
     rotateAndDriveToPosition(mp->mapElements.at(22));
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 4);
+    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 0);
 
     //Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), flywheelVelPercent, 3);
+    std::pair<double, double> goalWithOffset = {mp->mapElements.at(43)->GetPosition().first - 4, mp->mapElements.at(43)->GetPosition().second};
+    rotateAndShoot(goalWithOffset, 60.83, 3);
     
     
 }
@@ -332,7 +328,7 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     if (ourColor == vex::color::red) oppositeHue = BLUE_HUE;   
     else oppositeHue = RED_HUE;
     
-    spinIntake(false, false, 9);
+    spinIntake(false, true, 9);
     
     //If not red or blue, spin for 
     // if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND && fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
@@ -345,7 +341,7 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) 
     && ( ((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT) ); 
 
-    spinIntake(true, false); //stop intake
+    spinIntake(true, true); //stop intake
 }
 
 void AutoDrive::centerOnDisk(){

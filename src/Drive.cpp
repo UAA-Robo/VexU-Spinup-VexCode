@@ -52,6 +52,12 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     
     vex::wait(50, vex::timeUnits::msec);
     while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct)); //Blocks other tasks from starting 
+    
+    double currHeading = tm->getCurrHeading();
+    double newX = tm->getCurrPosition().first + distance * cos(currHeading * M_PI / 180.0); //need to convert degrees to radians
+    double newY = tm->getCurrPosition().second + distance * sin(currHeading * M_PI / 180.0);
+    tm->setCurrPosition({newX, newY});
+    tm->headingErrorCorrection();
 }
 
 void Drive :: spinIntake(bool ISSTOP, bool ISINVERT, int volts) {
