@@ -8,7 +8,6 @@ public:
 
 private:
     
-    const int deadzone = 5;
 
     double flywheelVoltage = 8;
 
