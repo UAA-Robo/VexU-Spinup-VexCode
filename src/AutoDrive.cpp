@@ -28,6 +28,10 @@ double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
     double targetRPM = targetVoltage / 12.0 * maxRPM;
     double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
 
+
+    this->Kp = 0.9/8.0 * targetVoltage;
+    this->Kd = 0.6 / 8.0 * targetVoltage;
+    this->Ki = 0.3 / 8.0 * targetVoltage;
     // PID calculations
     this->error = targetRPM - currentRPM;
     this->error = this->error / maxRPM * 12;
