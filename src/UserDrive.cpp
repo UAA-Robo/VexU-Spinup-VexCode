@@ -34,26 +34,18 @@ void UserDrive::drive()
 }
 
 void UserDrive::driveTrainControls(){
-    const int DEADZONE = 5;
+    const int DEADZONE = 2;
 
     double forwardBackward = (double) hw->controller.Axis3.position(vex::percentUnits::pct);
     double turning = (double) hw->controller.Axis1.position(vex::percentUnits::pct);
 
     if(std::abs(forwardBackward) < DEADZONE){
         forwardBackward = 0;
-    }else if(forwardBackward < 0){
-        forwardBackward += 5;
-    }else{
-        forwardBackward -= 5;
     }
 
 
     if(std::abs(turning) < DEADZONE) {
         turning = 0;
-    }else if(turning < 0){
-        turning +=5;
-    }else{
-        turning -= 5;
     }
 
     moveDriveTrain({forwardBackward, turning});

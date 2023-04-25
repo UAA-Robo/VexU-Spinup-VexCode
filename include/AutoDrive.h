@@ -18,6 +18,7 @@ private:
     bool IS_USING_ENCODER_POSITION = true; //If true, requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     bool IS_USING_ENCODER_HEADING = true;   //If true, requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
+    double robotAngleOffset = 0; //For Granny bc she veers left
     /// @brief Shoots after desired velocity is reached 
     /// @param velocity The desired velocity 
     void shootAtDesiredVelocity(double velocityRPM, int numFlicks);
@@ -53,10 +54,11 @@ private:
 
 
     /// @brief          Rotates to a goal and shoots disk(s).
-    /// @param goal     GameElement that is the goal to shoot at (42 or 43)/
+    /// @param goal     GameElement or pair that is the goal to shoot at (42 or 43)/
     /// @param velocityPercent  Double percent from 0 to 100 to shoot the disk(s) at.
     /// @param numDisksToShoot  Integer number of disks in the hopper to shoot (1-3).
     void rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot);
+    void rotateAndShoot(std::pair<double, double> goal, double velocityPercent, int numDisksToShoot);
 
     /// @brief  Rolls rolor until it sees the ourColor
     /// @param ourColor     Type vex::color red or blue depending on what side of the field we are on
