@@ -1,5 +1,5 @@
-
 #pragma once
+#include "vex.h"
 #include "Hardware.h"
 #include "RobotConfig.h"
 

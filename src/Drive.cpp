@@ -58,6 +58,7 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     double newX = tm->getCurrPosition().first + distance * cos(currHeading * M_PI / 180.0); //need to convert degrees to radians
     double newY = tm->getCurrPosition().second + distance * sin(currHeading * M_PI / 180.0);
     tm->setCurrPosition({newX, newY});
+    tm->positionErrorCorrection();
     tm->headingErrorCorrection();
 }
 
