@@ -58,7 +58,10 @@ private:
     /// @param numDisksToShoot  Integer number of disks in the hopper to shoot (1-3).
     void rotateAndShoot(GameElement* goal, double velocityPercent, int numDisksToShoot);
 
-    void rollRoller(vex::color ourColor);
+    /// @brief  Rolls rolor until it sees the ourColor
+    /// @param ourColor     Type vex::color red or blue depending on what side of the field we are on
+    /// @param IS_NO_TIME_OUT   Bool that if true, doesn't have a roller timeout so will spin forever if it doesn't see ourColor
+    void rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT = false);
 
     void usePathing(); 
 
