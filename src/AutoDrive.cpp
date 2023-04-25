@@ -275,23 +275,18 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor, bool isSkills) // Should be S
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {16.5, -56};
-
-    shootAtDesiredVelocity(40, 2);
-
-    spinFlywheel(0);
-
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
-    tm->positionErrorCorrection();
-    // tm->headingErrorCorrection();
+
+    shootAtDesiredVelocity(40, 2);
+    spinFlywheel(0);
 
     double xRollerOffset = 2;
-
+    double yRollerOffst = 6.5;
     // Drive to x-axis in front of roller
     rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, initPosition.second});
-
     // Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, mp->mapElements.at(47)->GetPosition().second + 6.5});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, mp->mapElements.at(47)->GetPosition().second + yRollerOffst});
 
     rollRoller(ourColor, false);
 }
@@ -305,18 +300,20 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor, bool isSkills) // Should be 
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {-16, 56};
-
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
-    tm->positionErrorCorrection();
-    // tm->headingErrorCorrection();
 
     shootAtDesiredVelocity(40, 2);
-
     spinFlywheel(0);
 
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, initPosition.second});
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, mp->mapElements.at(47)->GetPosition().second});
+    tm->setCurrPosition(initPosition);
+
+    double xRollerOffset = 2;
+    double yRollerOffst = -6.5;
+    // Drive to x-axis in front of roller
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first + xRollerOffset, initPosition.second});
+        // Rotate toward roller and make contact will roller wheels
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first + xRollerOffset, mp->mapElements.at(44)->GetPosition().second + yRollerOffst});
 
     rollRoller(rc->teamColor);
 }
@@ -390,8 +387,7 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     //  }
     // Else spin while seeing opposite color (outside deadband) and for 5 secs max
 
-    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT))
-        ;
+    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
 
     spinIntake(true, true); // stop intake
 }
