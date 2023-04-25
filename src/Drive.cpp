@@ -52,7 +52,7 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     hw->wheelRightFront.spinFor(numberWheelRevolutions, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
     
     vex::wait(50, vex::timeUnits::msec);
-    while(hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct)); //Blocks other tasks from starting 
+    while(fabs(hw->leftWheels.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->rightWheels.velocity(vex::velocityUnits::pct)) > 0); //Blocks other tasks from starting 
     
     double currHeading = tm->getCurrHeading();
     double newX = tm->getCurrPosition().first + distance * cos(currHeading * M_PI / 180.0); //need to convert degrees to radians
@@ -110,3 +110,4 @@ void Drive::expand()
     vex::wait(170, vex::timeUnits::msec);
 
 }
+

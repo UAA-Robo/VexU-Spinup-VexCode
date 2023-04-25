@@ -32,22 +32,22 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 
 double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
 {
-    // PID constants
-    double Kp = 0.15;
-    double Ki = 0.000;
-    double Kd = 0.00;
-
-    // PID variables
     double maxRPM = 600;
     double targetRPM = targetVoltage / 12.0 * maxRPM;
-    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;
+    double currentRPM = (hw->flywheelTop.velocity(vex::rpm) + hw->flywheelBottom.velocity(vex::rpm)) / 2;// = (flywheelTopMotor.velocity(rpm) + flywheelBottomMotor.velocity(rpm)) / 2;
 
+
+    this->Kp = 0.9/8.0 * targetVoltage;
+    this->Kd = 0.6 / 8.0 * targetVoltage;
+    this->Ki = 0.3 / 8.0 * targetVoltage;
     // PID calculations
     this->error = targetRPM - currentRPM;
-    this->integral += error * rc->PID_INTERVAL;
-    this->derivative = (error - prevError) / rc->PID_INTERVAL;
+    this->error = this->error / maxRPM * 12;
+    this->integral += error;
+    this->derivative = error - prevError;
     this->output = Kp * error + Ki * integral + Kd * derivative;
     this->prevError = error;
+    //this->outPutVolt = output / maxRPM * 12;
 
     // Limit output to valid motor voltage
     if (output > 12.0)
@@ -55,7 +55,6 @@ double AutoDrive::getPidFlywheelVoltage(double targetVoltage)
     if (output < -12.0)
         output = -12.0;
 
-    hw->controller.Screen.print("RPM:%d Out:%.2f", hw->flywheelTop.velocity(vex::rpm), output);
     return output;
 }
 
@@ -70,8 +69,7 @@ void AutoDrive::rotateToRelativeAngle(double angle) // Based on ENCODERS,
 
     hw->leftWheels.spinFor(revolutionsLeftWheels, vex::rotationUnits::rev, vel.first, vex::velocityUnits::pct, false);
     hw->rightWheels.spinFor(revolutionsRightWheels, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
-    while (hw->leftWheels.velocity(vex::velocityUnits::pct) > 0 || hw->leftWheels.velocity(vex::velocityUnits::pct))
-        ; // Blocks other tasks from starting
+    while (fabs(hw->leftWheels.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->rightWheels.velocity(vex::velocityUnits::pct)) > 0); // Blocks other tasks from starting
 }
 
 void AutoDrive::rotateToHeading(double heading)
@@ -287,22 +285,23 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {16.5, -56};
+    tm->setCurrPosition(initPosition);
+    tm->setCurrHeading(0);
 
     shootAtDesiredVelocity(40, 2);
-
     spinFlywheel(0);
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
+    tm->positionErrorCorrection();
     // tm->headingErrorCorrection();
 
     double xRollerOffset = 2;
-
+    double yRollerOffst = 6.5;
     // Drive to x-axis in front of roller
     rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, initPosition.second});
-
     // Rotate toward roller and make contact will roller wheels
-    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, mp->mapElements.at(47)->GetPosition().second + 6.5});
+    rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, mp->mapElements.at(47)->GetPosition().second + yRollerOffst});
 
     rollRoller(ourColor, false);
 }
@@ -316,16 +315,20 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor) // Should be Sid
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {-16, 56};
-
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
 
     shootAtDesiredVelocity(40, 2);
-
     spinFlywheel(0);
 
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, initPosition.second});
-    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first, mp->mapElements.at(47)->GetPosition().second});
+    tm->setCurrPosition(initPosition);
+
+    double xRollerOffset = 2;
+    double yRollerOffst = -6.5;
+    // Drive to x-axis in front of roller
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first + xRollerOffset, initPosition.second});
+        // Rotate toward roller and make contact will roller wheels
+    rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first + xRollerOffset, mp->mapElements.at(44)->GetPosition().second + yRollerOffst});
 
     rollRoller(rc->teamColor);
 }
@@ -342,9 +345,6 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
-
-    hw->controller.Screen.setCursor(1, 1);
-    hw->controller.Screen.print("I am here");
     // Set bot at rollers and spin intake reveerse to get the
     rollRoller(ourColor); // blue
 
@@ -399,9 +399,8 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     //  }
     // Else spin while seeing opposite color (outside deadband) and for 5 secs max
 
-    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND 
-    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue)))
-    && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
+    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT))
+        ;
 
     spinIntake(true, true); // stop intake
 }
