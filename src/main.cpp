@@ -82,7 +82,7 @@ void usercontrol(void) {
 // Main will set up the competition functions and callbacks.
 //
 int main() {
-  isControlled = false;
+  isControlled = true;
   
   // Set up callbacks for autonomous and driver control periods.
   //Competition.autonomous(autonomous);

@@ -12,15 +12,12 @@ void AutoDrive::drive() {
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {   
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
+    spinFlywheel(desiredVoltage);
     for(int i = 0; i < numFlicks; ++i)
     {
-        while(hw->flywheel.velocity(vex::percent) < velocityPercent)
-        {
-            spinFlywheel(getPidFlywheelVoltage(desiredVoltage));;
-        }
-
+        while(hw->flywheel.velocity(vex::percent) < velocityPercent);
         flickDisk();
-        vex::wait(100,vex::msec);
+        vex::wait(500,vex::msec);
     }
 }
 
