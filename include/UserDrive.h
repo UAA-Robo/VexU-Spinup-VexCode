@@ -9,7 +9,8 @@ public:
 private:
     
 
-    double flywheelVoltage = 8;
+    double flywheelVoltage = rc->lowFlywheelVoltUserDrive;
+    double initRumbleTime = 0;
 
     int mirrorDrive = 1;
 
