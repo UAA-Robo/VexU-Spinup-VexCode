@@ -88,12 +88,10 @@ int main() {
   // Run the pre-autonomous function.
   pre_auton();
 
-  Competition.test_driver();
-
-
-  //TESTING
-  //autonomous();
-  //usercontrol();
+  //Stops test_driver from interfering with auto (weird bug)
+  if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
+    Competition.test_driver();
+  }
 
 
   // Prevent main from exiting with an infinite loop.

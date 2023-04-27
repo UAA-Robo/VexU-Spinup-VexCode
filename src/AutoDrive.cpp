@@ -6,7 +6,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive()
 {   
-    isSkills = false;
+    isSkills = true;
     usePathing();
 }
 
@@ -223,15 +223,10 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
     std::pair<double, double> initPosition = {-61.5, 38};
     double initFlywheelSpeed = 63.5;
     spinFlywheel(initFlywheelSpeed / 100.0 * 12.0);
-    //hw->flywheel.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
-    //spinFlywheel(12);
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
     
-    //tm->positionErrorCorrection();
-    //tm->headingErrorCorrection();
-
     // Set bot at rollers and spin intake reveerse to get them
     rollRoller(vex::color::red);
 
