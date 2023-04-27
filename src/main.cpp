@@ -14,7 +14,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
-Robot* icebot;
+Robot* icebot = new Robot();
 bool isControlled;
 
 // define your global instances of motors and other devices here
@@ -31,8 +31,8 @@ bool isControlled;
 
 void pre_auton(void) {
 
-  icebot = new Robot();
-  //vex::wait(2000, vex::msec);
+  
+  vex::wait(3000, vex::msec);
   
   return;
 }
@@ -49,7 +49,7 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
-  icebot = new Robot();
+  //icebot = new Robot();
  if(!isControlled){
     icebot->driveAuto();
   }
@@ -67,7 +67,7 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  icebot = new Robot();
+  //icebot = new Robot();
   while (isControlled) {
     icebot->drive();
     vex::wait(20, vex::msec); // Sleep the task for a short amount of time to prevent wasted resources.

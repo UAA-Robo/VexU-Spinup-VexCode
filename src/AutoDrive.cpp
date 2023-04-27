@@ -6,28 +6,26 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive()
 {   
-    //shootAtDesiredVelocity(75, 10);
-    isSkills = true;
+    isSkills = false;
     usePathing();
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
+    spinFlywheel(11);
+    hw->flywheel.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+    vex::wait(50, vex::msec);
+    //hw->flywheel.spin(vex::directionType::fwd, velocityPercent, vex::velocityUnits::pct);
     spinFlywheel(desiredVoltage);
-    vex::wait(500, vex::msec);
+    vex::wait(300, vex::msec);
     for (int i = 0; i < numFlicks; ++i)
     {
-        //vex::wait(1000, vex::msec);
-        while (hw->flywheel.velocity(vex::percent) < velocityPercent) {
-            hw->controller.Screen.clearScreen();
-            hw->controller.Screen.setCursor(1,1);
-            hw->controller.Screen.print("%.2lf", hw->flywheel.velocity(vex::percent));
-            //vex::wait(200, vex::msec);
-        }
-        vex::wait(1500, vex::msec);
-        flickDisk();
         vex::wait(500, vex::msec);
+        while ((hw->flywheelTop.velocity(vex::percent) + hw->flywheelBottom.velocity(vex::percent)) / 2.0 < velocityPercent) vex::wait(20, vex::msec);
+        vex::wait(1000, vex::msec);
+        flickDisk();
+        vex::wait(300, vex::msec);
     }
 }
 
@@ -223,9 +221,14 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
 
     // robotAngleOffset = 0.5; //degrees
     std::pair<double, double> initPosition = {-61.5, 38};
+    double initFlywheelSpeed = 63.5;
+    spinFlywheel(initFlywheelSpeed / 100.0 * 12.0);
+    //hw->flywheel.spin(vex::directionType::fwd, 100, vex::velocityUnits::pct);
+    //spinFlywheel(12);
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
+    
     //tm->positionErrorCorrection();
     //tm->headingErrorCorrection();
 
@@ -243,7 +246,9 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
         rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
         
     }
-    rotateAndShoot(mp->mapElements.at(43), 65, 2);
+    rotateAndShoot(mp->mapElements.at(43), initFlywheelSpeed, 2);
+
+    
 
     if (isSkills)
     {
@@ -256,9 +261,11 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
 
     // Pick up 3 disks and move a bit past last one and shoot them
     // SHOOTING DISK 25 SHOULD BE AT 62.5%
+    rc->autoDriveVelPercent = 55;
     rotateAndDriveToPosition(mp->mapElements.at(25));
+    rc->autoDriveVelPercent = 45;
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15);
-    rotateAndShoot(mp->mapElements.at(43), 65, 3);
+    rotateAndShoot(mp->mapElements.at(43), 58, 3); //65
 
     // SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     // Pick up 3 disks and move a bit past last one
@@ -268,7 +275,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 0);
 
     // Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), 62, 3);
+    rotateAndShoot(mp->mapElements.at(43), 58.75, 3);
 
     if (isSkills) { //expand
         rotateAndDriveToPosition({58,-58}, true);
@@ -298,7 +305,7 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
-    tm->positionErrorCorrection();
+    //tm->positionErrorCorrection();
     // tm->headingErrorCorrection();
 
     double xRollerOffset = 2;
@@ -355,6 +362,7 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor) // Should be Sid
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {-16, 56};
+    
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
 
@@ -382,6 +390,8 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {61.5, -38};
+    double initFlywheelSpeed = 63.5;
+    spinFlywheel(initFlywheelSpeed / 100.0 * 12.0);
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
@@ -390,7 +400,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
 
     // Drive backward and shoot 2 diskds
     rotateAndDriveToPosition({initPosition.first - 5, initPosition.second}, true);
-    rotateAndShoot(mp->mapElements.at(42), 68, 2);
+    rotateAndShoot(mp->mapElements.at(42), initFlywheelSpeed, 2);
 
     // Spin intake to pick up disks
     spinIntake();
@@ -398,7 +408,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     // Pick up 3 disks and move a bit past last one, and shoot them
     rotateAndDriveToPosition(mp->mapElements.at(32));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15); // Move 5 extra inches past disk
-    rotateAndShoot(mp->mapElements.at(42), 62, 3);
+    rotateAndShoot(mp->mapElements.at(42), 58, 3);
 
     // Pick up 3 disks and move a bit past last one, and shoot them
     /*
@@ -411,7 +421,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     rotateAndDriveToPosition(mp->mapElements.at(35));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
 
-    rotateAndShoot(mp->mapElements.at(42), 65, 3);
+    rotateAndShoot(mp->mapElements.at(42), 58.75, 3);
 }
 
 void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)

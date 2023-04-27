@@ -15,6 +15,7 @@ Hardware::Hardware() {
     smartDriveTrain.setStopping(vex::brakeType::brake);
 
     launcher.setStopping(vex::brakeType::brake);
+    flywheel.setStopping(vex::brakeType::coast);
 
     //Calibrate sensors and wait while calibrating
     gpsSensor.calibrate();
