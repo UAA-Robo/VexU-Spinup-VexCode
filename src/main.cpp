@@ -93,7 +93,6 @@ int main() {
     Competition.test_driver();
   }
 
-
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);

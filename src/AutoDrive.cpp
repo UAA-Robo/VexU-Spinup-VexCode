@@ -8,6 +8,7 @@ void AutoDrive::drive()
 {   
     isSkills = true;
     usePathing();
+    //q2RedPathAlgo(vex::color::red);
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -221,16 +222,15 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
 
     // robotAngleOffset = 0.5; //degrees
     std::pair<double, double> initPosition = {-61.5, 38};
-    double initFlywheelSpeed = 63.5;
+    double initFlywheelSpeed = grannyVel1;
     spinFlywheel(initFlywheelSpeed / 100.0 * 12.0);
 
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
-    
-    // Set bot at rollers and spin intake reveerse to get them
+
     rollRoller(vex::color::red);
 
-    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2, mp->mapElements.at(44)->GetPosition().second - 9}; // ONLY FOR SKILLS
+    std::pair<double, double> secondRollerOffset = {mp->mapElements.at(44)->GetPosition().first - 2, mp->mapElements.at(44)->GetPosition().second - 8.5}; // ONLY FOR SKILLS
     // Drive backward and shoot 2 disks
     if (isSkills)
     {
@@ -241,7 +241,9 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
         rotateAndDriveToPosition({tm->getCurrPosition().first + 5, tm->getCurrPosition().second}, true);
         
     }
+    
     rotateAndShoot(mp->mapElements.at(43), initFlywheelSpeed, 2);
+
 
     
 
@@ -260,7 +262,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
     rotateAndDriveToPosition(mp->mapElements.at(25));
     rc->autoDriveVelPercent = 45;
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15);
-    rotateAndShoot(mp->mapElements.at(43), 58, 3); //65
+    rotateAndShoot(mp->mapElements.at(43), grannyVel2, 3); //65
 
     // SHOOTING AT POSITION 22 SHOULD BE AROUND 60.83%
     // Pick up 3 disks and move a bit past last one
@@ -270,7 +272,7 @@ void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 0);
 
     // Shoot 3 disks
-    rotateAndShoot(mp->mapElements.at(43), 58.75, 3);
+    rotateAndShoot(mp->mapElements.at(43), grannyVel3, 3);
 
     if (isSkills) { //expand
         rotateAndDriveToPosition({58,-58}, true);
@@ -303,8 +305,8 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
     //tm->positionErrorCorrection();
     // tm->headingErrorCorrection();
 
-    double xRollerOffset = 2;
-    double yRollerOffst = 6.5;
+    double xRollerOffset = 3;
+    double yRollerOffst = 6;
     // Drive to x-axis in front of roller
     rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, initPosition.second});
     // Rotate toward roller and make contact will roller wheels
@@ -314,7 +316,7 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
 
     if (isSkills) {
         xRollerOffset = 6;
-        yRollerOffst = 2;
+        yRollerOffst = 3;
         std::pair<double, double> secondRollerOffset = {mp->mapElements.at(46)->GetPosition().first - xRollerOffset, mp->mapElements.at(46)->GetPosition().second - yRollerOffst}; // ONLY FOR SKILLS
         rotateAndDriveToPosition({tm->getCurrPosition().first, secondRollerOffset.second}, true);
         rotateAndDriveToPosition(secondRollerOffset);
@@ -366,7 +368,7 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor) // Should be Sid
 
     tm->setCurrPosition(initPosition);
 
-    double xRollerOffset = 2;
+    double xRollerOffset = 3;
     double yRollerOffst = -6.5;
     // Drive to x-axis in front of roller
     rotateAndDriveToPosition({mp->mapElements.at(44)->GetPosition().first + xRollerOffset, initPosition.second});
@@ -385,7 +387,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
     std::pair<double, double> initPosition = {61.5, -38};
-    double initFlywheelSpeed = 63.5;
+    double initFlywheelSpeed = grannyVel1;
     spinFlywheel(initFlywheelSpeed / 100.0 * 12.0);
 
     tm->setCurrPosition(initPosition);
@@ -403,7 +405,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     // Pick up 3 disks and move a bit past last one, and shoot them
     rotateAndDriveToPosition(mp->mapElements.at(32));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 15); // Move 5 extra inches past disk
-    rotateAndShoot(mp->mapElements.at(42), 58, 3);
+    rotateAndShoot(mp->mapElements.at(42), grannyVel2, 3);
 
     // Pick up 3 disks and move a bit past last one, and shoot them
     /*
@@ -416,7 +418,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
     rotateAndDriveToPosition(mp->mapElements.at(35));
     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, 3);
 
-    rotateAndShoot(mp->mapElements.at(42), 58.75, 3);
+    rotateAndShoot(mp->mapElements.at(42), grannyVel3, 3);
 }
 
 void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
@@ -431,21 +433,30 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     const double MAX_TIME = 6; // seconds
 
     hw->controller.Screen.print(hw->opticalSensor.hue());
-    if (ourColor == vex::color::red)
+    if (ourColor == vex::color::red) {
         oppositeHue = BLUE_HUE;
-    else
+        ourHue = RED_HUE;
+    } else{
         oppositeHue = RED_HUE;
+        ourHue = BLUE_HUE;
+    }
 
     spinIntake(false, true, 9);
-
+    //vex::wait(300, vex::msec);
     // If not red or blue, spin for
     //  if (fabs(hw->opticalSensor.hue() - RED_HUE) > HUE_DEADBAND && fabs(hw->opticalSensor.hue() - BLUE_HUE) > HUE_DEADBAND) {
     //      vex::wait(2,vex::timeUnits::sec);
     //  }
     // Else spin while seeing opposite color (outside deadband) and for 5 secs max
 
-    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT))
-        ;
+    /*
+    while ((fabs(hw->opticalSensor.hue() - oppositeHue) < HUE_DEADBAND 
+    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - oppositeHue))) 
+    && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
+    */
+    while ((fabs(hw->opticalSensor.hue() - ourHue) < HUE_DEADBAND 
+    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - ourHue))) 
+    && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
 
     spinIntake(true, true); // stop intake
 }
