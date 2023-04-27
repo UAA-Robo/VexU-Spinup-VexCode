@@ -4,12 +4,12 @@
 		"json": 1
 	},
 	"project": {
-		"name": "VexU-Spinup-VexCode",
+		"name": "HeadToHead",
 		"description": "",
 		"creationDate": "4/18/2023, 2:01:12 PM",
 		"platform": "V5",
 		"language": "cpp",
-		"slot": 3,
+		"slot": 1,
 		"sdkVersion": "V5_20220726_10_00_00",
 		"cpp": {
 			"includePath": []

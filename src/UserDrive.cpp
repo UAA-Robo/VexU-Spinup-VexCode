@@ -13,7 +13,7 @@ void UserDrive::drive()
     mirrorDriveToggle();
     driveTrainControls();
     intakeControls();
-    flyweelControlswPID();
+    flywheelControls();
     flickDiskControls();
     expandControls();
 //     hw->controller.Screen.clearScreen();
