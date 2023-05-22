@@ -27,7 +27,7 @@ protected:
     Map* mp;
     Logger* positionLog;
 
-    bool ERROR_CORRECTION_ENABLED = true; //used for positionErrorCorrect and headingErrorCorrect
+    bool ERROR_CORRECTION_ENABLED = false; //used for positionErrorCorrect and headingErrorCorrect
 
     double outPutVolt;
     double Kp = 0.9;

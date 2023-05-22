@@ -106,7 +106,7 @@ void AutoDrive::rotateToHeading(double heading)
     }
 
     tm->setCurrHeading(heading);
-    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getGPSHeading(), tm->getInertiaHeading()});
+    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getCurrHeading(), tm->getGPSHeading(), tm->getInertiaHeading()});
     vex::wait(50, vex::timeUnits::msec);
     
     if (ERROR_CORRECTION_ENABLED) {
@@ -222,6 +222,8 @@ void AutoDrive::usePathing()
 
 //Used for collecting data
 void AutoDrive::moveToRandomPoints() {
+    ERROR_CORRECTION_ENABLED = false;
+
     std::pair<double, double> initPosition = {0, 0};
     double initHeading = 0;
     const int NUM_POSITIONS = 5;

@@ -12,5 +12,6 @@ public:
 private:
     Hardware* hw;
     std::ofstream dataLog;
+    std::string file;
 };
 
