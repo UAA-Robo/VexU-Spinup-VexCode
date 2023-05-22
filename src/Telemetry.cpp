@@ -164,15 +164,22 @@ double Telemetry::getInertiaHeading()
     return snapShotAverage(snapshot);
 }
 
-void Telemetry::setInertiaHeadingToGPS()
+void Telemetry::setInertiaHeading(double heading)
 {
-    double heading = getGPSHeading();
     // Changes heading from counterclockwise from the x axis (as returned by getGPSHeading) to clockwise because inertia sensor reads clockwise
     heading = fmod(360.0 - heading, 360.0);
     heading = (heading >= 0 ? heading : heading + 360.0);
 
     hw->inertiaSensor.setHeading(heading, vex::degrees);
 }
+
+void Telemetry::setInertiaHeadingToGPS()
+{
+    double heading = getGPSHeading();
+    setInertiaHeading(getGPSHeading());
+
+}
+
 
 void Telemetry::setCurrPosition(std::pair<double, double> currPos)
 {
@@ -191,12 +198,12 @@ void Telemetry::positionErrorCorrection(double errorBounds)
 
     if (x == 3)
     {
-        hw->controller.Screen.setCursor(2,1);
-        hw->controller.Screen.print("Used Encoder Value");
+        //hw->controller.Screen.setCursor(2,1);
+        //hw->controller.Screen.print("Used Encoder Value");
         return;
     }
-    hw->controller.Screen.setCursor(2,1);
-    hw->controller.Screen.print("Used GPS Value");
+    //hw->controller.Screen.setCursor(2,1);
+    //hw->controller.Screen.print("Used GPS Value");
     this->currentPosition = gpsEstimate;
 }
 
@@ -225,12 +232,12 @@ void Telemetry::headingErrorCorrection(double errorBounds)
 
     if (x == numChecks)
     {
-        hw->controller.Screen.setCursor(3,1);
-        hw->controller.Screen.print("Used Encoder Heading");
+        //hw->controller.Screen.setCursor(3,1);
+        //hw->controller.Screen.print("Used Encoder Heading");
         return;
     }
-    hw->controller.Screen.setCursor(3,1);
-    hw->controller.Screen.print("Used GPS Heading");
+    //hw->controller.Screen.setCursor(3,1);
+    //hw->controller.Screen.print("Used GPS Heading");
     this->currHeading = gpsEstimate;
 }
 

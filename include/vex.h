@@ -1,9 +1,15 @@
+#pragma once
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <algorithm>
 #include <numeric>
+#include <fstream>
+#include <ctime>
+#include <vector>
+#include <iostream>
+
 #include "v5.h"
 #include "v5_vcs.h"
 #define _USE_MATH_DEFINES

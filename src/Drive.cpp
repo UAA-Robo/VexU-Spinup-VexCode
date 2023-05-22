@@ -4,7 +4,10 @@ Drive::Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry)
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
+
     mp = new Map();
+    positionLog = new Logger(hw, "positionData.txt", {"encoderX", "encoderY", "encoderPosition" "gpsX", "gpsY", "gpsAngle", "rotationSensorAngle"});
+
     tm->setCurrPosition({0,0});
 }
 
@@ -58,8 +61,14 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     double newX = tm->getCurrPosition().first + distance * cos(currHeading * M_PI / 180.0); //need to convert degrees to radians
     double newY = tm->getCurrPosition().second + distance * sin(currHeading * M_PI / 180.0);
     tm->setCurrPosition({newX, newY});
-    tm->positionErrorCorrection();
-    tm->headingErrorCorrection();
+
+    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getGPSHeading(), tm->getInertiaHeading()});
+    vex::wait(50, vex::timeUnits::msec);
+    
+    if (ERROR_CORRECTION_ENABLED) {
+        tm->positionErrorCorrection();
+        tm->headingErrorCorrection();
+    }
 }
 
 void Drive :: spinIntake(bool ISSTOP, bool ISINVERT, int volts) {

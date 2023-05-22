@@ -71,6 +71,10 @@ public:
     /// @brief      Sets the current inertia sensor heading to the current GPS heading
     void setInertiaHeadingToGPS();
 
+    /// @brief Sets the current inertia sensor heading to passed-in value
+    /// @param heading Double represents the current heading in degrees (where the origin positive x axis) from 0-360
+    void setInertiaHeading(double heading);
+
     /// @brief      Sets the curent position of the robot
     /// @param currPos 
     void setCurrPosition(std::pair<double,double> currPos);

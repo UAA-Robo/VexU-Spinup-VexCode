@@ -1,8 +1,6 @@
 #pragma once
 #include "Drive.h"
 #include "vex.h"
-
-
 class AutoDrive : public Drive
 {
 public:
@@ -74,7 +72,9 @@ private:
 
     void usePathing(); 
 
-    
+    /// @brief Used for collecting data at random points on the feild
+    void moveToRandomPoints();
+
 
     void q2RedPathAlgo(vex::color ourColor); //Granny
 

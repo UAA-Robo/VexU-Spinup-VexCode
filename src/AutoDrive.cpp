@@ -1,14 +1,12 @@
 #include "AutoDrive.h"
 
+
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry)
-{
-}
+{}
 
 void AutoDrive::drive()
 {   
-    isSkills = false;
-    usePathing();
-    //q2RedPathAlgo(vex::color::red);
+    moveToRandomPoints();
 }
 
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
@@ -96,7 +94,7 @@ void AutoDrive::rotateToHeading(double heading)
 
         hw->smartDriveTrain.turnToHeading(clockwiseHeading, vex::degrees, rc->autoRotateVelPercent, vex::velocityUnits::pct);
     }
-    else // checks encoder heading with gps
+    else
     {
         double angleToRotate = heading - tm->getCurrHeading();
         angleToRotate = fmod(angleToRotate, 360); // make sure the angle to rotate is -360 to 360
@@ -106,9 +104,15 @@ void AutoDrive::rotateToHeading(double heading)
             angleToRotate = angleToRotate - 360;
         rotateToRelativeAngle(angleToRotate + robotAngleOffset);
     }
+
     tm->setCurrHeading(heading);
-    tm->headingErrorCorrection();
-    tm->positionErrorCorrection();
+    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getGPSHeading(), tm->getInertiaHeading()});
+    vex::wait(50, vex::timeUnits::msec);
+    
+    if (ERROR_CORRECTION_ENABLED) {
+        tm->headingErrorCorrection();
+        tm->positionErrorCorrection();
+    }
 }
 
 void AutoDrive::rotateToPosition(std::pair<double, double> finalPosition, bool ISBACKROTATION)
@@ -214,11 +218,29 @@ void AutoDrive::usePathing()
             break;
         }
     }
+}
 
-    // if (rc->quadrant == 2 && rc->teamColor == vex::color::red) q2RedPathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::red) q4RedPathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 1 && rc->teamColor == vex::color::blue) q1BluePathAlgo(rc->teamColor);
-    // else if (rc->quadrant == 4 && rc->teamColor == vex::color::blue) q4BluePathAlgo(rc->teamColor);
+//Used for collecting data
+void AutoDrive::moveToRandomPoints() {
+    std::pair<double, double> initPosition = {0, 0};
+    double initHeading = 0;
+    const int NUM_POSITIONS = 5;
+    const int UPPER_BOUND = 60;
+    const int LOWER_BOUND = -UPPER_BOUND;
+
+    tm->setCurrPosition(initPosition);
+    tm->setCurrHeading(initHeading);
+    tm->setInertiaHeading(initHeading);
+
+    srand(time(0));
+    for (int i = 0; i < NUM_POSITIONS; i++) {
+        int randX = rand() % (UPPER_BOUND - LOWER_BOUND + 1) + LOWER_BOUND;
+        int randY = rand() % (UPPER_BOUND - LOWER_BOUND + 1) + LOWER_BOUND;
+        rotateAndDriveToPosition({randX, randY});
+    }
+    rotateAndDriveToPosition({0, 0});
+    rotateToHeading(0);
+
 }
 
 void AutoDrive::q2RedPathAlgo(vex::color ourColor) // Should be Granny

@@ -4,6 +4,7 @@
 #include "Telemetry.h"
 #include "RobotConfig.h"
 #include "map/Map.h"
+#include "Logger.h"
 
 class Drive{
 
@@ -24,6 +25,9 @@ protected:
     RobotConfig* rc;
     Telemetry* tm;
     Map* mp;
+    Logger* positionLog;
+
+    bool ERROR_CORRECTION_ENABLED = true; //used for positionErrorCorrect and headingErrorCorrect
 
     double outPutVolt;
     double Kp = 0.9;
