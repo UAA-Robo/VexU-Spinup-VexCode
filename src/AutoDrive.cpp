@@ -6,7 +6,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive()
 {   
-    isSkills = true;
+    isSkills = false;
     usePathing();
     //q2RedPathAlgo(vex::color::red);
 }
@@ -20,10 +20,19 @@ void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
     //hw->flywheel.spin(vex::directionType::fwd, velocityPercent, vex::velocityUnits::pct);
     spinFlywheel(desiredVoltage);
     vex::wait(300, vex::msec);
+    double initTime;
+    const double MAX_TIME = 8; // seconds
+
     for (int i = 0; i < numFlicks; ++i)
-    {
+    {   
+        initTime = hw->brain.timer(vex::timeUnits::sec);
         vex::wait(500, vex::msec);
-        while ((hw->flywheelTop.velocity(vex::percent) + hw->flywheelBottom.velocity(vex::percent)) / 2.0 < velocityPercent) vex::wait(20, vex::msec);
+        while ((hw->flywheelTop.velocity(vex::percent) + hw->flywheelBottom.velocity(vex::percent)) / 2.0 < velocityPercent
+        && ((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME)) 
+        {
+            vex::wait(20, vex::msec);
+        }
+            
         vex::wait(1000, vex::msec);
         flickDisk();
         vex::wait(300, vex::msec);
@@ -99,6 +108,7 @@ void AutoDrive::rotateToHeading(double heading)
     }
     tm->setCurrHeading(heading);
     tm->headingErrorCorrection();
+    tm->positionErrorCorrection();
 }
 
 void AutoDrive::rotateToPosition(std::pair<double, double> finalPosition, bool ISBACKROTATION)
@@ -293,9 +303,11 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
     IS_USING_ENCODER_POSITION = true; // requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     IS_USING_ENCODER_HEADING = true;  // requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
-    std::pair<double, double> initPosition = {16.5, -56};
+    std::pair<double, double> initPosition = {16.5, -55};
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(0);
+    spinFlywheel(sidVolt1);
+    vex::wait(sidWait1, vex::msec);
 
     shootAtDesiredVelocity(40, 2);
     spinFlywheel(0);
@@ -305,7 +317,7 @@ void AutoDrive::q4RedPathAlgo(vex::color ourColor) // Should be Sid
     //tm->positionErrorCorrection();
     // tm->headingErrorCorrection();
 
-    double xRollerOffset = 3;
+    double xRollerOffset = 3.7;
     double yRollerOffst = 6;
     // Drive to x-axis in front of roller
     rotateAndDriveToPosition({mp->mapElements.at(47)->GetPosition().first - xRollerOffset, initPosition.second});
@@ -362,6 +374,9 @@ void AutoDrive::q2BluePathAlgo(vex::color ourColor) // Should be Sid
     
     tm->setCurrPosition(initPosition);
     tm->setCurrHeading(180);
+
+    spinFlywheel(sidVolt1);
+    vex::wait(sidWait1, vex::msec);
 
     shootAtDesiredVelocity(40, 2);
     spinFlywheel(0);
@@ -423,7 +438,7 @@ void AutoDrive::q4BluePathAlgo(vex::color ourColor) // Should be Granny
 
 void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
 {
-    const double HUE_DEADBAND = 40;
+    const double HUE_DEADBAND = 60;
     const double INTAKE_VOLT = 9; // reaches 150 rpm to match the optical sensor rate
     double oppositeHue;
     double ourHue;
@@ -455,7 +470,7 @@ void AutoDrive::rollRoller(vex::color ourColor, bool IS_NO_TIME_OUT)
     && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
     */
     while ((fabs(hw->opticalSensor.hue() - ourHue) < HUE_DEADBAND 
-    || hw->opticalSensor.hue() >= 360 - (HUE_DEADBAND - fabs(hw->opticalSensor.hue() - ourHue))) 
+    || HUE_DEADBAND >= 360 - (fabs(hw->opticalSensor.hue() - ourHue))) 
     && (((hw->brain.timer(vex::timeUnits::sec) - initTime) < MAX_TIME) || IS_NO_TIME_OUT));
 
     spinIntake(true, true); // stop intake

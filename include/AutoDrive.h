@@ -18,9 +18,12 @@ private:
     bool IS_USING_ENCODER_POSITION = true; //If true, requires you to use tm->setManualPosition({x,y}) before you call autoDrive functions
     bool IS_USING_ENCODER_HEADING = true;   //If true, requires you to use tm->setManualHeading(heading) before you call autoDrive functions
 
-    double grannyVel1  = 66.25;
-    double grannyVel2 = 61.75;
-    double grannyVel3 = 62.5;
+    double grannyVel1  = 63.5 + 22; //66.25;
+    double grannyVel2 =  59 + 20;//61.75;
+    double grannyVel3 =  59.5 + 20;//62.5;
+
+    double sidVolt1 = 90.0/100.0*12.0;
+    double sidWait1 = 200;
 
     double robotAngleOffset = 0; //For Granny bc she veers left
     /// @brief Shoots after desired velocity is reached 

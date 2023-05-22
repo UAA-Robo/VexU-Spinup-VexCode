@@ -9,7 +9,7 @@ Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
     rc = robotConfig;
 
     gpsTotalDistance = 0;
-    drivetrainEncoderTotalDistance = 0;
+    //drivetrainEncoderTotalDistance = 0;
 }
 
 void Telemetry::printGPSInertiaData() {

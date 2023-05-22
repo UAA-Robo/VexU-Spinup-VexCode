@@ -9,7 +9,8 @@ public:
 private:
     
 
-    double flywheelVoltage = rc->lowFlywheelVoltUserDrive;
+    //double flywheelVoltage = rc->lowFlywheelVoltUserDrive; //Sid
+    double flywheelVoltage = rc->highFlywheelVoltUserDrive; //Granny
     double initRumbleTime = 0;
 
     int mirrorDrive = 1;
