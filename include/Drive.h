@@ -27,6 +27,9 @@ protected:
     Map* mp;
     Logger* positionLog;
 
+    std::pair<double, double> positionGoal; //For logging thread
+    double headingGoal; //For logging purposes
+
     bool ERROR_CORRECTION_ENABLED = false; //used for positionErrorCorrect and headingErrorCorrect
 
     double outPutVolt;
@@ -34,6 +37,10 @@ protected:
     double Ki = 0.3;
     double Kd = 0.6;
     
+
+    /// @brief Adds data to log.
+    /// @return Tasks must return an int so this returns 0 (but it dosn't mean anything)
+    static int logData(void* param);
 
     /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on
     ///             the horizontal percentage and vertical percentage passed in. Automatically scales the velocities

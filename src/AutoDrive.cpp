@@ -9,6 +9,7 @@ void AutoDrive::drive()
     moveToRandomPoints();
 }
 
+
 void AutoDrive::shootAtDesiredVelocity(double velocityPercent, int numFlicks)
 {
     double desiredVoltage = velocityPercent / 100.0 * 12.0;
@@ -81,6 +82,8 @@ void AutoDrive::rotateToRelativeAngle(double angle) // Based on ENCODERS,
 
 void AutoDrive::rotateToHeading(double heading)
 {
+    headingGoal = heading; //For logging purposes in Drive
+
     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
     heading = fmod(heading, 360);
     if (heading < 0)
@@ -106,7 +109,7 @@ void AutoDrive::rotateToHeading(double heading)
     }
 
     tm->setCurrHeading(heading);
-    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getCurrHeading(), tm->getGPSHeading(), tm->getInertiaHeading()});
+
     vex::wait(50, vex::timeUnits::msec);
     
     if (ERROR_CORRECTION_ENABLED) {
@@ -122,6 +125,7 @@ void AutoDrive::rotateToPosition(std::pair<double, double> finalPosition, bool I
 
     if (ISBACKROTATION)
         heading -= 180;
+    
     rotateToHeading(heading);
 }
 
@@ -150,7 +154,7 @@ void AutoDrive::rotateAndDriveToPosition(GameElement *element)
 
 void AutoDrive::rotateAndDriveToPosition(std::pair<double, double> position, bool ISBACKTOPOSITION)
 {
-
+    positionGoal = position; //For logging purposes in Drive
     rotateToPosition(position, ISBACKTOPOSITION);
 
     // if (IS_USING_GPS_HEADING) tm->setCurrPosition(tm->getGPSPosition());
@@ -222,12 +226,15 @@ void AutoDrive::usePathing()
 
 //Used for collecting data
 void AutoDrive::moveToRandomPoints() {
+
+    vex::task logTask = vex::task(logData, this, 1);
+
     ERROR_CORRECTION_ENABLED = false;
 
     std::pair<double, double> initPosition = {0, 0};
     double initHeading = 0;
-    const int NUM_POSITIONS = 5;
-    const int UPPER_BOUND = 60;
+    const int NUM_POSITIONS = 10;
+    const int UPPER_BOUND = 36;
     const int LOWER_BOUND = -UPPER_BOUND;
 
     tm->setCurrPosition(initPosition);

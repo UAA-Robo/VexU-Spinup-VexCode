@@ -1,12 +1,12 @@
 {
 	"extension": {
-		"version": "0.4.1",
+		"version": "0.4.2",
 		"json": 1
 	},
 	"project": {
-		"name": "DataLogRun",
-		"description": "",
-		"creationDate": "4/18/2023, 2:01:12 PM",
+		"name": "dataLog",
+		"description": "ahhh",
+		"creationDate": "7/6/2023, 5:53:41 PM",
 		"platform": "V5",
 		"language": "cpp",
 		"slot": 1,

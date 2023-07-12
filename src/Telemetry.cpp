@@ -3,7 +3,7 @@
 
 
 
-Telemetry ::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
+Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
     hw = hardware;
     rc = robotConfig;

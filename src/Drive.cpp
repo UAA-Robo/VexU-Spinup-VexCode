@@ -1,4 +1,5 @@
 #include "Drive.h"
+#include <iostream>
 
 Drive::Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry) {
     hw = hardware;
@@ -6,9 +7,41 @@ Drive::Drive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry)
     tm = telemetry;
 
     mp = new Map();
-    positionLog = new Logger(hw, "positionData.txt", {"encoderX", "encoderY", "gpsX", "gpsY", "encoderAngle", "gpsAngle", "rotationSensorAngle"});
+
+    /* 
+    X and Y coords are in inches
+    Heading is in degrees from the positive x axis, rotated counterclockwise
+    Wheel Displacement  is in revolutions (FL = Front Left, FR = Front Right, BL = Back Left, BR = Back Front)
+    Wheel Velocity (Vel) is in RPM (
+    Wheel Voltage is in volts
+    Wheel Power is in watts
+    */
+    positionLog = new Logger(hw, "positionData.txt", {"initX", "initY", "goalX", "goalY", "gpsX", "gpsY", 
+                                                        "initHeading","goalHeading", "gpsHeading", "inertiaSensorHeading",
+                                                        "wheelDisplacementFL", "wheelDisplacementFR","wheelDisplacementBL","wheelDisplacementBR",
+                                                        "wheelVelFL", "wheelVelFR","wheelVelBL","wheelVelBR",
+                                                        "wheelVolFL", "wheelVolFR","wheelVolBL","wheelVolBR",
+                                                        "wheelPowerFL", "wheelPowerFR","wheelPowerBL","wheelPowerBR",
+                                                        });
 
     tm->setCurrPosition({0,0});
+}
+
+int Drive::logData(void* param) {
+    Drive* DriveLogger = static_cast<Drive*>(param);
+
+    while(true) {
+        DriveLogger->positionLog->addData({DriveLogger->tm->getCurrPosition().first, DriveLogger->tm->getCurrPosition().second, DriveLogger->positionGoal.first, DriveLogger->positionGoal.second,DriveLogger->tm->getGPSPosition().first, DriveLogger->tm->getGPSPosition().second, 
+                                DriveLogger->tm->getCurrHeading(), DriveLogger->headingGoal, DriveLogger->tm->getGPSHeading(), DriveLogger->tm->getInertiaHeading(),
+                                DriveLogger->hw->wheelLeftFront.position(vex::rev), DriveLogger->hw->wheelRightFront.position(vex::rev), DriveLogger->hw->wheelLeftBack.position(vex::rev),DriveLogger->hw->wheelRightBack.position(vex::rev),
+                                DriveLogger->hw->wheelLeftFront.velocity(vex::rpm), DriveLogger->hw->wheelRightFront.velocity(vex::rpm), DriveLogger->hw->wheelLeftBack.velocity(vex::rpm),DriveLogger->hw->wheelRightBack.velocity(vex::rpm),
+                                DriveLogger->hw->wheelLeftFront.voltage(vex::volt), DriveLogger->hw->wheelRightFront.voltage(vex::volt), DriveLogger->hw->wheelLeftBack.voltage(vex::volt),DriveLogger->hw->wheelRightBack.voltage(vex::volt),
+                                DriveLogger->hw->wheelLeftFront.power(vex::powerUnits::watt), DriveLogger->hw->wheelRightFront.power(vex::powerUnits::watt), DriveLogger->hw->wheelLeftBack.power(vex::powerUnits::watt),DriveLogger->hw->wheelRightBack.power(vex::powerUnits::watt),
+                            });
+        
+        vex::wait(1, vex::sec);
+    }
+    return 0;
 }
 
 std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> velPercent) //{verticalVelPercent, horizontalVelPercent}
@@ -32,6 +65,7 @@ std::pair<double,double> Drive::calculateDriveTrainVel(std::pair<double,double> 
         double rightVel =  100 * rightVelMultiplier;
 
         return {leftVel, rightVel};
+
 }
 
 
@@ -62,7 +96,6 @@ void Drive ::moveDriveTrainDistance(std::pair<double,double> velPercent, double 
     double newY = tm->getCurrPosition().second + distance * sin(currHeading * M_PI / 180.0);
     tm->setCurrPosition({newX, newY});
 
-    positionLog->addData({tm->getCurrPosition().first, tm->getCurrPosition().second, tm->getGPSPosition().first, tm->getGPSPosition().second, tm->getCurrHeading(), tm->getGPSHeading(), tm->getInertiaHeading()});
     vex::wait(50, vex::timeUnits::msec);
     
     if (ERROR_CORRECTION_ENABLED) {

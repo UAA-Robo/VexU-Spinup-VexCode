@@ -8,6 +8,8 @@ public:
     void drive();
 
 private:
+
+
     vex::vision::signature yellow_disk = vex::vision::signature(1, -715,-291, -503, -4109, -3709, -3909, 5.7, 0);
 
     bool IS_USING_GPS_HEADING = false;
@@ -24,6 +26,9 @@ private:
     double sidWait1 = 200;
 
     double robotAngleOffset = 0; //For Granny bc she veers left
+
+
+
     /// @brief Shoots after desired velocity is reached 
     /// @param velocity The desired velocity 
     void shootAtDesiredVelocity(double velocityRPM, int numFlicks);
